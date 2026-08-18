@@ -12,7 +12,7 @@
 
     body {
       font-family: 'IBM Plex Sans Thai', sans-serif;
-      background: #071525;
+      background: #75b8df;
       color: white;
       width: 100vw; height: 100vh;
       overflow: hidden;
@@ -286,13 +286,13 @@
     /* ── DSSI Sky Stage ── */
     .display-bg {
       background:
-        radial-gradient(ellipse 70% 55% at 75% 18%,rgba(43,93,132,.42),transparent 62%),
-        radial-gradient(ellipse 65% 50% at 10% 85%,rgba(31,68,102,.4),transparent 65%),
-        linear-gradient(165deg,#102c46,#071525 70%);
+        radial-gradient(ellipse 70% 55% at 75% 18%,rgba(255,255,255,.26),transparent 62%),
+        radial-gradient(ellipse 65% 50% at 10% 85%,rgba(117,184,223,.42),transparent 65%),
+        linear-gradient(165deg,#91cef0,#5d9fca 72%);
     }
     .display-bg::after {
       content:''; position:absolute; inset:0;
-      background:linear-gradient(180deg,rgba(3,14,27,.08),rgba(3,14,27,.5));
+      background:linear-gradient(180deg,rgba(16,51,78,.03),rgba(16,51,78,.28));
       pointer-events:none;
     }
     .stars { display:none; }
@@ -340,7 +340,7 @@
       box-shadow:0 16px 44px rgba(16,36,63,.24); backdrop-filter:none;
     }
     .qr-text { color:var(--sky-ink); text-transform:none; letter-spacing:0; }
-    .transition-overlay { background:#071525; }
+    .transition-overlay { background:#75b8df; }
     .no-photo-placeholder .empty-icon { margin:0; color:rgba(255,255,255,.72); }
     @media (max-width:760px), (max-height:620px) {
       .display-header { padding:14px 20px; }
@@ -441,9 +441,9 @@
     try {
       vantaEffect = VANTA.CLOUDS({
         el:'#vanta-display', mouseControls:true, touchControls:true, gyroControls:false,
-        minHeight:200, minWidth:200, skyColor:0x0b1b33, cloudColor:0x526f84,
-        cloudShadowColor:0x050b14, sunColor:0xdb744c, sunGlareColor:0x724331,
-        sunlightColor:0x8c6a54, speed:0.45,
+        minHeight:200, minWidth:200, skyColor:0x6eb6e2, cloudColor:0xe5f2f9,
+        cloudShadowColor:0x789aae, sunColor:0xffad63, sunGlareColor:0xffd7a1,
+        sunlightColor:0xffdfb0, speed:0.45,
       });
     } catch (error) {
       console.warn('Vanta unavailable; using the static sky background.', error);
