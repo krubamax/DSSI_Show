@@ -212,10 +212,6 @@ body {
   0%, 100% { box-shadow: 0 0 0 0 rgba(255,59,48,0.4); }
   50% { box-shadow: 0 0 0 6px rgba(255,59,48,0); }
 }
-@keyframes float-heart {
-  0% { transform: translateY(0) scale(1); opacity: 1; }
-  100% { transform: translateY(-200px) scale(0.5) rotate(20deg); opacity: 0; }
-}
 @keyframes glow-pulse {
   0%, 100% { box-shadow: 0 0 20px currentColor; }
   50% { box-shadow: 0 0 40px currentColor, 0 0 60px currentColor; }
@@ -389,15 +385,6 @@ body {
               0 0 60px var(--border-color, #FF1493);
   animation: glow-pulse 2s ease-in-out infinite;
   z-index: -1;
-}
-
-/* ─── Heart Animation ──────────────────────────────────────────────────────── */
-.heart-particle {
-  position: fixed;
-  pointer-events: none;
-  font-size: 24px;
-  z-index: 9998;
-  animation: float-heart 2.5s ease-out forwards;
 }
 
 /* ─── Responsive ───────────────────────────────────────────────────────────── */

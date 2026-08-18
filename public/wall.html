@@ -101,13 +101,6 @@
     .wall-card-table {
       font-size: 11px; color: rgba(255,255,255,0.5);
     }
-    .wall-card-likes {
-      position: absolute; top: 8px; right: 8px;
-      background: rgba(0,0,0,0.6);
-      border-radius: 50px;
-      padding: 2px 8px;
-      font-size: 12px;
-    }
     .wall-card-border {
       position: absolute; inset: 0;
       border-radius: 12px;
@@ -154,25 +147,6 @@
       background: rgba(0,0,0,0.6); border: none; color: white;
       border-radius: 50%; width: 36px; height: 36px; cursor: pointer; font-size: 18px;
     }
-    .detail-like-btn {
-      width: 100%; margin-top: 16px; padding: 14px;
-      background: linear-gradient(135deg, #FF1493, #C2185B);
-      border: none; border-radius: 50px; color: white;
-      font-family: 'Prompt', sans-serif; font-size: 16px; font-weight: 700;
-      cursor: pointer; transition: all 0.2s;
-    }
-    .detail-like-btn:hover { transform: scale(1.02); }
-
-    /* Hearts */
-    .heart-particle {
-      position: fixed; pointer-events: none; z-index: 500;
-      animation: float-heart 2.5s ease-out forwards;
-    }
-    @keyframes float-heart {
-      0%   { transform: translateY(0) scale(1); opacity: 1; }
-      100% { transform: translateY(-200px) scale(0.3); opacity: 0; }
-    }
-
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-thumb { background: rgba(255,20,147,0.4); border-radius: 2px; }
   </style>
@@ -205,7 +179,6 @@
       <div id="detail-table" style="font-size:13px; color:rgba(255,255,255,0.4); margin-bottom:8px;"></div>
       <div id="detail-msg" class="detail-msg" style="display:none"></div>
       <div class="detail-socials" id="detail-socials"></div>
-      <button class="detail-like-btn" id="detail-like-btn" onclick="likeFromModal()">❤️ ไลก์ <span id="modal-likes">0</span></button>
     </div>
   </div>
 </div>
@@ -239,11 +212,6 @@
     ws.onmessage = async ({ data }) => {
       const { type, data: d } = JSON.parse(data);
       if (['approved','approved_all','removed','cleared'].includes(type)) await loadDisplay();
-      if (type === 'liked') {
-        const item = items.find(i => i.id === d.id);
-        if (item) { item.likes = d.likes; updateCardLikes(d.id, d.likes); }
-        if (currentModalId === d.id) document.getElementById('modal-likes').textContent = d.likes;
-      }
       if (type === 'settings_updated') document.getElementById('wall-logo').textContent = d.eventName || 'DSSI';
     };
     ws.onclose = () => setTimeout(connectWS, 3000);
@@ -275,15 +243,9 @@
           <div class="wall-card-name">${escHtml(item.name)}</div>
           ${item.table ? `<div class="wall-card-table">โต๊ะ ${escHtml(item.table)}</div>` : ''}
         </div>
-        <div class="wall-card-likes" id="wl-${item.id}">❤️ ${item.likes}</div>
       `;
       grid.appendChild(card);
     });
-  }
-
-  function updateCardLikes(id, likes) {
-    const el = document.getElementById(`wl-${id}`);
-    if (el) el.textContent = `❤️ ${likes}`;
   }
 
   // ── Modal ──
@@ -306,37 +268,11 @@
     if (item.ig) socials.innerHTML += `<div class="detail-chip" style="background:linear-gradient(135deg,#f09433,#dc2743,#bc1888)">📸 @${escHtml(item.ig)}</div>`;
     if (item.facebook) socials.innerHTML += `<div class="detail-chip" style="background:#1877F2">💙 ${escHtml(item.facebook)}</div>`;
 
-    document.getElementById('modal-likes').textContent = item.likes;
     modal.classList.add('open');
   }
 
   function closeModal() { document.getElementById('detail-modal').classList.remove('open'); currentModalId = null; }
   function closeDetail(e) { if (e.target === document.getElementById('detail-modal')) closeModal(); }
-
-  async function likeFromModal() {
-    if (!currentModalId) return;
-    const btn = document.getElementById('detail-like-btn');
-    btn.style.transform = 'scale(1.05)';
-    setTimeout(() => btn.style.transform = '', 200);
-    spawnHeart();
-    try { await fetch(`/api/like/${currentModalId}`, { method: 'POST' }); } catch {}
-  }
-
-  function spawnHeart() {
-    const emojis = ['❤️','💕','💖','💗'];
-    for (let i = 0; i < 8; i++) {
-      setTimeout(() => {
-        const h = document.createElement('div');
-        h.className = 'heart-particle';
-        h.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-        h.style.fontSize = (16 + Math.random() * 16) + 'px';
-        h.style.left = 30 + Math.random() * 40 + 'vw';
-        h.style.top = 50 + Math.random() * 30 + 'vh';
-        document.body.appendChild(h);
-        setTimeout(() => h.remove(), 2600);
-      }, i * 100);
-    }
-  }
 
   function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 

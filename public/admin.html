@@ -270,7 +270,6 @@
   <div class="navbar-stats">
     <div class="stat-badge">🎭 รออนุมัติ <strong id="nb-queue">0</strong></div>
     <div class="stat-badge">📺 บนจอ <strong id="nb-display">0</strong></div>
-    <div class="stat-badge">❤️ <strong id="nb-likes">0</strong></div>
   </div>
   <div class="navbar-actions">
     <button class="btn btn-ghost btn-sm" onclick="window.open('/warp','_blank')" title="ดูฟอร์ม">📏 ฟอร์ม</button>
@@ -465,7 +464,6 @@
       if (type === 'rejected') { loadQueue(); loadBanned(); loadStats(); }
       if (type === 'removed') { loadDisplay(); loadStats(); }
       if (type === 'cleared') { loadDisplay(); loadStats(); }
-      if (type === 'liked') updateLikes(d.id, d.likes);
       if (type === 'settings_updated') applySettings(d);
     };
     ws.onclose = () => setTimeout(connectWS, 3000);
@@ -524,7 +522,6 @@
       const s = await r.json();
       document.getElementById('nb-queue').textContent = s.queue;
       document.getElementById('nb-display').textContent = s.display;
-      document.getElementById('nb-likes').textContent = s.totalLikes;
       document.getElementById('tc-queue').textContent = s.queue;
       document.getElementById('tc-display').textContent = s.display;
     } catch {}
@@ -626,7 +623,6 @@
         <button class="btn btn-success btn-sm" style="flex:1" onclick="approveOne('${item.id}')">✅ อนุมัติ</button>
         <button class="btn btn-danger btn-sm" style="flex:1" onclick="rejectOne('${item.id}')">🚫 ไม่ผ่าน</button>
       ` : type === 'display' ? `
-        <div style="display:flex; align-items:center; gap:6px; font-size:13px; color:rgba(255,255,255,0.5)">❤️ <strong id="likes-${item.id}">${item.likes}</strong></div>
         <button class="btn btn-danger btn-sm" onclick="removeDisplay('${item.id}')">🗑 นำออก</button>
       ` : '';
 
@@ -650,12 +646,6 @@
 
   function escHtml(str) {
     return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
-
-  function updateLikes(id, likes) {
-    const el = document.getElementById(`likes-${id}`);
-    if (el) el.textContent = likes;
-    document.getElementById('nb-likes').textContent = parseInt(document.getElementById('nb-likes').textContent || 0) + 1;
   }
 
   // ── Actions ──

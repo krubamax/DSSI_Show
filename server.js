@@ -92,7 +92,6 @@ app.post('/api/submit', upload.single('photo'), (req, res) => {
       facebook: (facebook || '').trim().replace(/^@/, ''),
       borderColor: borderColor || '#FF1493',
       photo: req.file ? `/uploads/${req.file.filename}` : null,
-      likes: 0,
       createdAt: new Date().toISOString(),
       status: 'pending',
     };
@@ -114,15 +113,6 @@ app.post('/api/submit', upload.single('photo'), (req, res) => {
   }
 });
 
-// Like
-app.post('/api/like/:id', (req, res) => {
-  const item = display.find((i) => i.id === req.params.id);
-  if (!item) return res.status(404).json({ error: 'Not found' });
-  item.likes++;
-  broadcast('liked', { id: item.id, likes: item.likes });
-  res.json({ success: true, likes: item.likes });
-});
-
 // Public display items (for display screen)
 app.get('/api/display', (req, res) => res.json(display));
 
@@ -135,7 +125,6 @@ app.get('/api/stats', (req, res) => {
     queue: queue.length,
     display: display.length,
     banned: banned.length,
-    totalLikes: display.reduce((s, i) => s + i.likes, 0),
   });
 });
 
