@@ -7,43 +7,55 @@
   <meta name="description" content="ส่งรูป ส่งใจ ขึ้นจอเลย — DSSI" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800;900&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" />
   <link rel="stylesheet" href="/style.css" />
   <style>
-    body { background: var(--bg); overflow-x: hidden; }
+    :root {
+      --sky-ink: #10243f;
+      --sky-blue: #2d7dce;
+      --cloud-white: #f7fbff;
+      --sunset: #ff6685;
+      --sunbeam: #ffd56a;
+    }
+    html { background: #74b9e9; }
+    body {
+      background: transparent;
+      color: var(--sky-ink);
+      overflow-x: hidden;
+      font-family: 'IBM Plex Sans Thai', sans-serif;
+      isolation: isolate;
+    }
 
     /* ── Animated BG ── */
     .page-bg {
-      position: fixed; inset: 0; z-index: -1;
-      background:
-        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(120,0,180,0.35) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 50% at 80% 80%, rgba(255,20,147,0.2) 0%, transparent 60%),
-        linear-gradient(180deg, #0a0520 0%, #050510 100%);
+      position: fixed; inset: 0; z-index: -2;
+      background: linear-gradient(165deg, #8ecbf0, #d9eff9);
     }
     .page-bg::after {
       content: '';
       position: absolute; inset: 0;
-      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      background: linear-gradient(180deg, rgba(13,49,82,.08), rgba(18,42,67,.28));
+      pointer-events: none;
     }
+
+    .icon { width: 1.15em; height: 1.15em; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: 0 0 auto; }
 
     /* ── Header ── */
     .warp-header {
       text-align: center;
-      padding: 40px 20px 24px;
+      padding: 52px 20px 26px;
+      color: white;
+      text-shadow: 0 2px 20px rgba(16,36,63,.25);
     }
     .warp-title {
       font-size: clamp(2rem, 8vw, 3rem);
-      font-weight: 900;
-      letter-spacing: 0.05em;
-      background: linear-gradient(135deg, #FF1493 0%, #FF69B4 40%, #FFD700 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      text-shadow: none;
+      font-family: 'Chakra Petch', sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.12em;
     }
     .warp-subtitle {
       font-size: 14px;
-      color: rgba(255,255,255,0.5);
+      color: rgba(255,255,255,.86);
       margin-top: 4px;
     }
 
@@ -52,52 +64,85 @@
       margin: 0 20px 20px;
       padding: 16px 20px;
       border-radius: var(--radius);
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
+      max-width: 440px;
+      margin-left: auto;
+      margin-right: auto;
+      background: rgba(247,251,255,.76);
+      border: 1px solid rgba(255,255,255,.75);
+      box-shadow: 0 18px 48px rgba(16,36,63,.14);
+      backdrop-filter: blur(18px) saturate(130%);
       font-size: 14px;
-      color: rgba(255,255,255,0.7);
+      color: #37516d;
       text-align: center;
       animation: fadeInUp 0.5s ease;
     }
     .status-banner.party {
-      background: linear-gradient(135deg, rgba(255,20,147,0.12), rgba(120,0,180,0.12));
-      border-color: rgba(255,20,147,0.25);
+      background: rgba(247,251,255,.82);
+      border-color: rgba(255,255,255,.9);
     }
     .status-banner-title {
       font-size: 17px;
       font-weight: 700;
-      color: white;
+      color: var(--sky-ink);
       margin-top: 4px;
     }
 
     /* ── Form Container ── */
     .form-container {
       max-width: 480px;
-      margin: 0 auto;
-      padding: 0 20px 40px;
+      margin: 0 auto 48px;
+      padding: 24px;
       display: flex;
       flex-direction: column;
       gap: 16px;
+      background: rgba(247,251,255,.86);
+      border: 1px solid rgba(255,255,255,.85);
+      border-radius: 26px;
+      box-shadow: 0 26px 80px rgba(16,36,63,.2);
+      backdrop-filter: blur(22px) saturate(135%);
+    }
+    .form-container .form-label { color: #26445f; font-weight: 600; }
+    .form-container .form-input,
+    .form-container .form-textarea {
+      color: var(--sky-ink);
+      background: rgba(255,255,255,.72);
+      border-color: rgba(45,125,206,.2);
+    }
+    .form-container .form-input::placeholder,
+    .form-container .form-textarea::placeholder { color: #7890a5; }
+    .form-container .form-input:focus,
+    .form-container .form-textarea:focus {
+      border-color: var(--sky-blue);
+      background: white;
+      box-shadow: 0 0 0 3px rgba(45,125,206,.13);
     }
 
     /* ── Social Input ── */
     .social-prefix {
-      color: rgba(255,255,255,0.4);
+      color: #718ba3;
       font-size: 15px;
       flex-shrink: 0;
     }
 
     /* ── Photo Upload ── */
-    .upload-hint { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 6px; }
+    .upload-hint { font-size: 12px; color: #607a91; margin-top: 6px; display:flex; gap:6px; align-items:center; }
     .photo-upload-inner { pointer-events: none; }
-    .upload-icon { font-size: 42px; margin-bottom: 8px; }
-    .upload-label { font-size: 15px; font-weight: 600; color: white; }
-    .upload-sub { font-size: 13px; color: rgba(255,255,255,0.4); margin-top: 4px; }
+    .upload-icon { width: 44px; height: 44px; margin: 0 auto 8px; color: var(--sky-blue); }
+    .upload-label { font-size: 15px; font-weight: 700; color: var(--sky-ink); }
+    .upload-sub { font-size: 13px; color: #6d8499; margin-top: 4px; }
+    .photo-upload-area { background: rgba(230,244,252,.72); border-color: rgba(45,125,206,.28); }
+    .photo-upload-area:hover, .photo-upload-area.drag-over { border-color: var(--sky-blue); background: #edf8ff; }
+
+    .upload-progress { display:none; margin-top:10px; }
+    .upload-progress.visible { display:block; }
+    .upload-progress-row { display:flex; justify-content:space-between; color:#526e87; font-size:12px; margin-bottom:6px; }
+    .upload-progress-track { height:8px; overflow:hidden; border-radius:999px; background:rgba(45,125,206,.14); }
+    .upload-progress-bar { height:100%; width:0; border-radius:inherit; background:linear-gradient(90deg,var(--sky-blue),var(--sunset)); transition:width .18s ease; }
 
     /* ── Char counter ── */
     .char-counter {
       font-size: 12px;
-      color: rgba(255,255,255,0.35);
+      color: #71879b;
       text-align: right;
       margin-top: 4px;
     }
@@ -114,11 +159,13 @@
       padding: 40px 20px;
       text-align: center;
       animation: fadeIn 0.5s ease;
+      color: white;
+      text-shadow: 0 2px 18px rgba(16,36,63,.3);
     }
     .success-screen.visible { display: flex; }
-    .success-icon { font-size: 72px; margin-bottom: 20px; animation: notification-pop 0.5s ease; }
+    .success-icon { width:72px; height:72px; color:white; margin-bottom:20px; animation:notification-pop .5s ease; }
     .success-title { font-size: 26px; font-weight: 800; margin-bottom: 8px; }
-    .success-sub { font-size: 15px; color: rgba(255,255,255,0.6); margin-bottom: 32px; }
+    .success-sub { font-size: 15px; color: rgba(255,255,255,.88); margin-bottom: 32px; }
 
     /* ── Like button on form ── */
     .live-stats {
@@ -144,10 +191,24 @@
       height: 1px;
       background: rgba(255,255,255,0.08);
     }
+    .btn-primary { background:linear-gradient(135deg,#277bc0,#1d5d9b); box-shadow:0 10px 26px rgba(29,93,155,.25); }
+    .btn-primary:hover { box-shadow:0 14px 32px rgba(29,93,155,.32); }
+    .social-btn { background:rgba(255,255,255,.72); border-color:rgba(45,125,206,.2); }
+    .social-btn input { color:var(--sky-ink); }
+    .color-swatch { box-shadow:0 2px 8px rgba(16,36,63,.12); }
+    .required-mark { color:#d84965; }
+    @media (max-width:520px) {
+      .form-container { margin:0 12px 30px; padding:20px; border-radius:22px; }
+      .status-banner { margin-left:12px; margin-right:12px; }
+      .warp-header { padding-top:38px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; scroll-behavior:auto !important; }
+    }
   </style>
 </head>
 <body>
-<div class="page-bg"></div>
+<div class="page-bg" id="vanta-clouds"></div>
 <div id="toast-container"></div>
 
 <!-- ── Header ─────────────────────────────────────────────────────────────── -->
@@ -158,7 +219,7 @@
 
 <!-- ── Status Banner ──────────────────────────────────────────────────────── -->
 <div id="status-banner" class="status-banner">
-  <div>🎉 ยังไม่มีใครส่งวาร์ปขึ้นจอเลย</div>
+  <div><svg class="icon" aria-hidden="true"><use href="#icon-sparkles" /></svg> ยังไม่มีใครส่งวาร์ปขึ้นจอเลย</div>
   <div class="status-banner-title">มาเป็นคนแรกกันเลย!</div>
 </div>
 
@@ -167,7 +228,7 @@
 
   <!-- Name -->
   <div class="form-group">
-    <label class="form-label">ชื่อ / ชื่อเล่น <span style="color:#FF1493">*</span></label>
+    <label class="form-label">ชื่อ / ชื่อเล่น <span class="required-mark">*</span></label>
     <input id="input-name" class="form-input" type="text" placeholder="ใส่ชื่อให้คนบนจอรู้จัก" maxlength="50" autocomplete="off" />
   </div>
 
@@ -176,13 +237,13 @@
   <!-- Message -->
   <div class="form-group">
     <label class="form-label">ข้อความ / คำทักทาย</label>
-    <textarea id="input-message" class="form-textarea" placeholder="พิมพ์อะไรก็ได้ที่อยากให้ขึ้นจอ... 💬" maxlength="280" rows="3"></textarea>
+    <textarea id="input-message" class="form-textarea" placeholder="พิมพ์สิ่งที่อยากให้ขึ้นจอ..." maxlength="280" rows="3"></textarea>
     <div class="char-counter" id="char-counter">0/280</div>
   </div>
 
   <!-- Instagram -->
   <div class="form-group">
-    <label class="form-label">แจกวาร์ป Instagram <span style="color:rgba(255,255,255,0.35)">(ไม่บังคับ)</span></label>
+    <label class="form-label">แจกวาร์ป Instagram <span style="color:#71879b">(ไม่บังคับ)</span></label>
     <div class="social-btn">
       <div class="social-icon-ig">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
@@ -194,7 +255,7 @@
 
   <!-- Facebook -->
   <div class="form-group">
-    <label class="form-label">แจกวาร์ป Facebook <span style="color:rgba(255,255,255,0.35)">(ไม่บังคับ)</span></label>
+    <label class="form-label">แจกวาร์ป Facebook <span style="color:#71879b">(ไม่บังคับ)</span></label>
     <div class="social-btn">
       <div style="width:32px;height:32px;background:#1877F2;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
@@ -205,11 +266,11 @@
 
   <!-- Photo -->
   <div class="form-group">
-    <label class="form-label">แนบรูป <span style="color:rgba(255,255,255,0.35)">(รูปเดียว ระบบครอปแนวตั้งให้)</span></label>
-    <div class="photo-upload-area" id="upload-area" onclick="document.getElementById('photo-input').click()">
+    <label class="form-label">แนบรูป <span id="photo-required-label" style="color:#607a91">(รูปเดียว ระบบครอปแนวตั้งให้)</span></label>
+    <div class="photo-upload-area" id="upload-area" tabindex="0" role="button" aria-label="เลือกรูป" onclick="document.getElementById('photo-input').click()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();document.getElementById('photo-input').click()}">
       <input type="file" id="photo-input" accept="image/jpeg,image/jpg,image/png,image/gif,image/webp,image/*" style="display:none" />
       <div class="photo-upload-inner" id="upload-placeholder">
-        <div class="upload-icon">📸</div>
+        <svg class="upload-icon icon" aria-hidden="true"><use href="#icon-camera" /></svg>
         <div class="upload-label">แตะเพื่อเลือกรูป</div>
         <div class="upload-sub">รูปจะถูกครอปเป็นแนวตั้งอัตโนมัติ</div>
       </div>
@@ -219,10 +280,14 @@
           position:absolute; top:8px; right:8px;
           background:rgba(0,0,0,0.7); border:none; color:white;
           border-radius:50%; width:30px; height:30px; cursor:pointer; font-size:16px;
-        ">✕</button>
+        " aria-label="ลบรูป"><svg class="icon" aria-hidden="true"><use href="#icon-x" /></svg></button>
       </div>
     </div>
-    <div class="upload-hint">📷 ไฟล์ภาพ JPG, PNG, WEBP ขนาดไม่เกิน 10MB</div>
+    <div class="upload-hint"><svg class="icon" aria-hidden="true"><use href="#icon-image" /></svg> ไฟล์ภาพ JPG, PNG, GIF หรือ WEBP ขนาดไม่เกิน 15MB</div>
+    <div class="upload-progress" id="upload-progress" role="progressbar" aria-label="ความคืบหน้าการอัปโหลด" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+      <div class="upload-progress-row"><span id="upload-progress-label">เตรียมรูป</span><strong id="upload-progress-value">0%</strong></div>
+      <div class="upload-progress-track"><div class="upload-progress-bar" id="upload-progress-bar"></div></div>
+    </div>
   </div>
 
   <!-- Border Color -->
@@ -242,9 +307,9 @@
 
   <!-- Submit -->
   <button class="btn btn-primary btn-lg" id="submit-btn" onclick="submitWarp()">
-    🚀 ส่งขึ้นจอ
+    <svg class="icon" aria-hidden="true"><use href="#icon-send" /></svg> ส่งขึ้นจอ
   </button>
-  <p style="text-align:center; font-size:13px; color:rgba(255,255,255,0.35); margin-top:-8px;">
+  <p style="text-align:center; font-size:13px; color:#607a91; margin-top:-8px;">
     การส่งจะถูกตรวจสอบโดยแอดมินก่อนขึ้นจอ<br>กรุณาส่งเนื้อหาที่เหมาะสม
   </p>
 
@@ -252,25 +317,41 @@
 
 <!-- ── Success Screen ──────────────────────────────────────────────────────── -->
 <div id="success-section" class="success-screen">
-  <div class="success-icon">🎉</div>
+  <svg class="success-icon icon" aria-hidden="true"><use href="#icon-check-circle" /></svg>
   <div class="success-title">ส่งสำเร็จแล้ว!</div>
-  <div class="success-sub">รอแอดมินอนุมัติแล้วจะขึ้นจอเลย ✨<br>ลุ้นๆ ได้เลย!</div>
+  <div class="success-sub">รอแอดมินอนุมัติแล้วจะขึ้นจอเลย<br>ติดตามบนจอได้เลย</div>
   <div class="live-stats">
-    <div class="stat-badge">🎭 คิว: <strong id="stat-queue">-</strong></div>
-    <div class="stat-badge">📺 บนจอ: <strong id="stat-display">-</strong></div>
+    <div class="stat-badge"><svg class="icon" aria-hidden="true"><use href="#icon-clock" /></svg> คิว: <strong id="stat-queue">-</strong></div>
+    <div class="stat-badge"><svg class="icon" aria-hidden="true"><use href="#icon-screen" /></svg> บนจอ: <strong id="stat-display">-</strong></div>
   </div>
   <br>
   <button class="btn btn-ghost" onclick="resetForm()" style="margin-top: 16px;">
-    ส่งอีกคน 👥
+    <svg class="icon" aria-hidden="true"><use href="#icon-plus" /></svg> ส่งอีกคน
   </button>
 </div>
 
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="icon-camera" viewBox="0 0 24 24"><path d="M14.5 4 16 7h3a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h3l1.5-3z"/><circle cx="12" cy="13" r="4"/></symbol>
+  <symbol id="icon-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="m21 15-5-5L5 20"/></symbol>
+  <symbol id="icon-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4zM22 2 11 13"/></symbol>
+  <symbol id="icon-x" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+  <symbol id="icon-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 2.7 2.7L16.5 9"/></symbol>
+  <symbol id="icon-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="icon-screen" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8m-4-4v4"/></symbol>
+  <symbol id="icon-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="icon-sparkles" viewBox="0 0 24 24"><path d="m12 3 1.1 3.2L16 8l-2.9 1.8L12 13l-1.1-3.2L8 8l2.9-1.8zM5 14l.8 2.2L8 17.5l-2.2 1.3L5 21l-.8-2.2L2 17.5l2.2-1.3zM19 11l.7 1.8 1.8.7-1.8.7L19 16l-.7-1.8-1.8-.7 1.8-.7z"/></symbol>
+  <symbol id="icon-heart" viewBox="0 0 24 24"><path d="M20.8 4.6a5.4 5.4 0 0 0-7.6 0L12 5.8l-1.2-1.2a5.4 5.4 0 1 0-7.6 7.6L12 21l8.8-8.8a5.4 5.4 0 0 0 0-7.6z"/></symbol>
+</svg>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.clouds.min.js"></script>
 <script>
   const WS_URL = `${location.protocol === 'https:' ? 'wss:' : 'ws:'}//${location.host}`;
-  let ws, selectedColor = '#FF1493', croppedBlob = null;
+  let ws, selectedColor = '#FF1493', croppedBlob = null, requirePhoto = false, vantaEffect = null;
 
   // ── Init ──
   async function init() {
+    initClouds();
     await loadSettings();
     await loadStats();
     connectWS();
@@ -279,12 +360,36 @@
     setupMessageCounter();
   }
 
+  function initClouds() {
+    if (!window.VANTA?.CLOUDS || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    try {
+      vantaEffect = VANTA.CLOUDS({
+        el: '#vanta-clouds',
+        mouseControls: true,
+        touchControls: true,
+        gyroControls: false,
+        minHeight: 200,
+        minWidth: 200,
+        skyColor: 0x68b8e8,
+        cloudColor: 0xddeffa,
+        cloudShadowColor: 0x6e91a8,
+        sunColor: 0xffa96b,
+        sunGlareColor: 0xffd7a1,
+        sunlightColor: 0xffd9a8,
+        speed: 0.55,
+      });
+    } catch (error) {
+      console.warn('Vanta unavailable; using the static sky background.', error);
+    }
+  }
+
   async function loadSettings() {
     try {
       const r = await fetch('/api/settings');
       const s = await r.json();
       document.getElementById('event-name').textContent = s.eventName || 'DSSI';
       document.getElementById('event-subtitle').textContent = s.subtitle || 'ส่งรูป ส่งใจ ขึ้นจอเลย';
+      applySubmissionSettings(s);
     } catch(e) {}
   }
 
@@ -295,7 +400,7 @@
       updateStats(s);
       if (s.queue > 0 || s.display > 0) {
         document.getElementById('status-banner').innerHTML = `
-          <div>🎭 มีคนส่งวาร์ปแล้ว <strong>${s.queue + s.display}</strong> คน</div>
+          <div><svg class="icon" aria-hidden="true"><use href="#icon-sparkles" /></svg> มีคนส่งวาร์ปแล้ว <strong>${s.queue + s.display}</strong> คน</div>
           <div class="status-banner-title">มาร่วมสนุกกันเลย!</div>
         `;
         document.getElementById('status-banner').classList.add('party');
@@ -320,9 +425,19 @@
       if (type === 'settings_updated') {
         document.getElementById('event-name').textContent = data.eventName;
         document.getElementById('event-subtitle').textContent = data.subtitle;
+        applySubmissionSettings(data);
       }
     };
     ws.onclose = () => setTimeout(connectWS, 3000);
+  }
+
+  function applySubmissionSettings(settings) {
+    requirePhoto = settings.requirePhoto === true;
+    const requiredLabel = document.getElementById('photo-required-label');
+    requiredLabel.innerHTML = requirePhoto
+      ? '<span class="required-mark">* บังคับแนบรูป</span>'
+      : '(รูปเดียว ระบบครอปแนวตั้งให้)';
+    document.getElementById('photo-input').required = requirePhoto;
   }
 
   // ── Color Picker ──
@@ -369,11 +484,14 @@
     // Android บางรุ่น type อาจเป็น empty string
     const isImage = file.type.startsWith('image/') || /\.(jpe?g|png|gif|webp|heic|heif)$/i.test(file.name);
     if (!isImage) { showToast('กรุณาเลือกไฟล์ภาพเท่านั้น', 'error'); return; }
-    if (file.size > 15 * 1024 * 1024) { showToast('ไฟล์ใหญ่เกินไป (สูงสุด 10MB)', 'error'); return; }
+    if (file.size > 15 * 1024 * 1024) { showToast('ไฟล์ใหญ่เกินไป (สูงสุด 15MB)', 'error'); return; }
 
-    showToast('กำลังโหลดรูป...', 'info');
+    setUploadProgress(4, 'กำลังอ่านรูป', true);
     const reader = new FileReader();
-    reader.onerror = () => showToast('อ่านไฟล์ไม่ได้ ลองใหม่อีกครั้ง', 'error');
+    reader.onprogress = (event) => {
+      if (event.lengthComputable) setUploadProgress(Math.max(4, Math.round((event.loaded / event.total) * 45)), 'กำลังอ่านรูป', true);
+    };
+    reader.onerror = () => { setUploadProgress(0, 'อ่านรูปไม่สำเร็จ', true); showToast('อ่านไฟล์ไม่ได้ ลองใหม่อีกครั้ง', 'error'); };
     reader.onload = (e) => {
       const img = new Image();
       img.onerror = () => showToast('โหลดรูปไม่ได้ ลองใหม่อีกครั้ง', 'error');
@@ -384,6 +502,7 @@
   }
 
   function cropImage(img, mimeType) {
+    setUploadProgress(55, 'กำลังจัดรูปให้พอดี', true);
     const canvas = document.createElement('canvas');
     const targetW = 540, targetH = 720; // 3:4 ratio (reduced for speed)
     canvas.width = targetW;
@@ -420,7 +539,7 @@
         document.getElementById('photo-preview').src = url;
         document.getElementById('upload-placeholder').style.display = 'none';
         document.getElementById('photo-preview-container').style.display = 'block';
-        showToast('ครอปรูปแล้ว ✅', 'success');
+        setUploadProgress(100, 'รูปพร้อมส่ง', true);
       }, 'image/jpeg', 0.80);
     } catch (err) {
       // Fallback สุดท้าย: ใช้ dataURL
@@ -429,7 +548,7 @@
       document.getElementById('photo-preview').src = dataUrl;
       document.getElementById('upload-placeholder').style.display = 'none';
       document.getElementById('photo-preview-container').style.display = 'block';
-      showToast('ครอปรูปแล้ว ✅', 'success');
+      setUploadProgress(100, 'รูปพร้อมส่ง', true);
     }
   }
 
@@ -450,12 +569,28 @@
     document.getElementById('photo-preview').src = '';
     document.getElementById('upload-placeholder').style.display = 'block';
     document.getElementById('photo-preview-container').style.display = 'none';
+    setUploadProgress(0, 'เตรียมรูป', false);
+  }
+
+  function setUploadProgress(percent, label, visible = true) {
+    const progress = document.getElementById('upload-progress');
+    const value = Math.max(0, Math.min(100, Math.round(percent)));
+    progress.classList.toggle('visible', visible);
+    progress.setAttribute('aria-valuenow', value);
+    document.getElementById('upload-progress-bar').style.width = `${value}%`;
+    document.getElementById('upload-progress-value').textContent = `${value}%`;
+    document.getElementById('upload-progress-label').textContent = label;
   }
 
   // ── Submit ──
   async function submitWarp() {
     const name = document.getElementById('input-name').value.trim();
-    if (!name) { showToast('กรุณาใส่ชื่อก่อนนะ 🙏', 'error'); document.getElementById('input-name').focus(); return; }
+    if (!name) { showToast('กรุณาใส่ชื่อก่อนส่ง', 'error'); document.getElementById('input-name').focus(); return; }
+    if (requirePhoto && !croppedBlob) {
+      showToast('งานนี้กำหนดให้แนบรูปก่อนส่ง', 'error');
+      document.getElementById('upload-area').focus();
+      return;
+    }
 
     const btn = document.getElementById('submit-btn');
     btn.disabled = true;
@@ -469,16 +604,35 @@
     fd.append('borderColor', selectedColor);
     if (croppedBlob) fd.append('photo', croppedBlob, 'photo.jpg');
 
-    try {
-      const r = await fetch('/api/submit', { method: 'POST', body: fd });
-      const d = await r.json();
-      if (!r.ok) throw new Error(d.error || 'Error');
-      showSuccess();
-    } catch (err) {
-      showToast(`ส่งไม่ได้: ${err.message}`, 'error');
-      btn.disabled = false;
-      btn.innerHTML = '🚀 ส่งขึ้นจอ';
-    }
+    if (croppedBlob) setUploadProgress(0, 'กำลังอัปโหลด', true);
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', '/api/submit');
+    xhr.upload.onprogress = (event) => {
+      if (event.lengthComputable && croppedBlob) {
+        setUploadProgress((event.loaded / event.total) * 100, 'กำลังอัปโหลด', true);
+      }
+    };
+    xhr.onload = () => {
+      let data = {};
+      try { data = JSON.parse(xhr.responseText); } catch {}
+      if (xhr.status >= 200 && xhr.status < 300) {
+        if (croppedBlob) setUploadProgress(100, 'อัปโหลดสำเร็จ', true);
+        showSuccess();
+        return;
+      }
+      showSubmitError(data.error || 'เซิร์ฟเวอร์รับข้อมูลไม่สำเร็จ');
+    };
+    xhr.onerror = () => showSubmitError('เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ กรุณาลองใหม่');
+    xhr.send(fd);
+  }
+
+  function showSubmitError(message) {
+    showToast(`ส่งไม่ได้: ${message}`, 'error');
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = false;
+    btn.innerHTML = '<svg class="icon" aria-hidden="true"><use href="#icon-send" /></svg> ส่งขึ้นจอ';
+    if (croppedBlob) setUploadProgress(100, 'รูปพร้อมส่ง', true);
   }
 
   function showSuccess() {
@@ -499,7 +653,7 @@
     document.getElementById('input-facebook').value = '';
     document.getElementById('char-counter').textContent = '0/280';
     document.getElementById('submit-btn').disabled = false;
-    document.getElementById('submit-btn').innerHTML = '🚀 ส่งขึ้นจอ';
+    document.getElementById('submit-btn').innerHTML = '<svg class="icon" aria-hidden="true"><use href="#icon-send" /></svg> ส่งขึ้นจอ';
     removePhoto();
     selectedColor = '#FF1493';
     document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
@@ -513,7 +667,8 @@
       setTimeout(() => {
         const h = document.createElement('div');
         h.className = 'heart-particle';
-        h.textContent = ['❤️','💕','💖','💗','💓'][Math.floor(Math.random()*5)];
+        h.innerHTML = '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-heart" /></svg>';
+        h.style.color = ['#ff6685','#ff87a0','#ffd56a'][Math.floor(Math.random()*3)];
         h.style.left = Math.random() * 80 + 10 + 'vw';
         h.style.top = '70vh';
         h.style.fontSize = (16 + Math.random() * 20) + 'px';

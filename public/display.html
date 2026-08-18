@@ -5,16 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DSSI — จอแสดงผล</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800;900&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" />
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800;900&display=swap');
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root { --pink: #FF1493; --yellow: #FFD60A; }
+    :root { --pink: #ff6685; --yellow: #ffd56a; --sky-ink:#10243f; --sky-blue:#2d7dce; }
 
     body {
-      font-family: 'Prompt', sans-serif;
-      background: #060614;
+      font-family: 'IBM Plex Sans Thai', sans-serif;
+      background: #071525;
       color: white;
       width: 100vw; height: 100vh;
       overflow: hidden;
@@ -321,11 +319,91 @@
       transition: opacity 0.3s ease;
     }
     .transition-overlay.show { opacity: 1; }
+
+    /* ── DSSI Sky Stage ── */
+    .display-bg {
+      background:
+        radial-gradient(ellipse 70% 55% at 75% 18%,rgba(43,93,132,.42),transparent 62%),
+        radial-gradient(ellipse 65% 50% at 10% 85%,rgba(31,68,102,.4),transparent 65%),
+        linear-gradient(165deg,#102c46,#071525 70%);
+    }
+    .display-bg::after {
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(180deg,rgba(3,14,27,.08),rgba(3,14,27,.5));
+      pointer-events:none;
+    }
+    .stars { display:none; }
+    .ui-icon { width:1.2em; height:1.2em; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+    .display-header { padding:22px 34px; }
+    .display-logo {
+      font-family:'Chakra Petch',sans-serif; font-weight:700; letter-spacing:.14em;
+      color:white; background:none; -webkit-text-fill-color:currentColor;
+      text-shadow:0 2px 18px rgba(16,36,63,.25);
+    }
+    .live-indicator {
+      color:white; background:rgba(16,36,63,.22); border-color:rgba(255,255,255,.38);
+      backdrop-filter:blur(12px); box-shadow:0 8px 30px rgba(16,36,63,.12);
+    }
+    .live-dot { background:#ff6685; }
+    .display-content { padding:8px clamp(24px,5vw,72px) 34px; }
+    .warp-card {
+      max-width:1180px; gap:clamp(28px,5vw,72px); padding:clamp(22px,3vw,38px);
+      border-radius:34px; color:white;
+      background:rgba(8,27,48,.34); border:1px solid rgba(255,255,255,.26);
+      box-shadow:0 28px 90px rgba(4,20,36,.32); backdrop-filter:blur(28px) saturate(120%);
+    }
+    .photo-img, .no-photo-placeholder { width:clamp(240px,31vw,440px); max-height:68vh; border-radius:24px; }
+    .photo-frame-border { inset:-5px; border-radius:29px; border-width:5px; }
+    .photo-frame-glow { inset:-8px; border-radius:31px; opacity:.42 !important; }
+    .info-name {
+      font-family:'Chakra Petch','IBM Plex Sans Thai',sans-serif; color:white;
+      font-size:clamp(2.6rem,6vw,5.4rem); text-shadow:0 3px 22px rgba(4,20,36,.35); letter-spacing:-.025em;
+    }
+    .info-message { color:rgba(255,255,255,.8); }
+    .social-chip { box-shadow:none; }
+    .like-area { right:34px; bottom:38px; }
+    .like-btn {
+      color:#e95272; background:rgba(247,251,255,.88); border-color:rgba(255,255,255,.95);
+      box-shadow:0 14px 36px rgba(16,36,63,.2); font-size:30px;
+    }
+    .like-btn:hover { color:#d63e60; background:white; border-color:white; }
+    .like-count { color:white; text-shadow:0 1px 10px rgba(16,36,63,.45); }
+    .progress-bar-wrap { height:5px; background:rgba(255,255,255,.22); }
+    .progress-bar-fill { background:linear-gradient(90deg,#2d7dce,#ff6685); }
+    .nav-dot { background:rgba(255,255,255,.48); }
+    .nav-dot.active { background:white; }
+    .empty-display {
+      min-width:min(560px,90vw); padding:48px; border-radius:32px; color:white;
+      background:rgba(8,27,48,.34); border:1px solid rgba(255,255,255,.24);
+      box-shadow:0 28px 80px rgba(2,10,20,.38); backdrop-filter:blur(28px);
+    }
+    .empty-icon { width:72px; height:72px; margin:0 auto 20px; color:#8ecdf2; }
+    .empty-sub { color:rgba(255,255,255,.66); }
+    .qr-container {
+      left:34px; bottom:38px; background:#fff; border-color:rgba(255,255,255,.95);
+      box-shadow:0 16px 44px rgba(16,36,63,.24); backdrop-filter:none;
+    }
+    .qr-text { color:var(--sky-ink); text-transform:none; letter-spacing:0; }
+    .transition-overlay { background:#071525; }
+    .heart-particle { color:#ff6685; }
+    .no-photo-placeholder .empty-icon { margin:0; color:rgba(255,255,255,.72); }
+    @media (max-width:760px), (max-height:620px) {
+      .display-header { padding:14px 20px; }
+      .display-content { padding:4px 20px 26px; }
+      .warp-card { gap:22px; padding:20px; border-radius:24px; }
+      .photo-img, .no-photo-placeholder { width:clamp(180px,36vw,280px); max-height:65vh; }
+      .info-name { font-size:clamp(2rem,7vw,3.8rem); }
+      .qr-container { left:18px; bottom:28px; padding:8px; }
+      .like-area { right:18px; bottom:28px; }
+    }
+    @media (prefers-reduced-motion:reduce) {
+      *,*::before,*::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; }
+    }
   </style>
 </head>
 <body>
 <!-- ── Background ─────────────────────────────────────────────────────────── -->
-<div class="display-bg"></div>
+<div class="display-bg" id="vanta-display"></div>
 <div class="stars" id="stars"></div>
 <div class="transition-overlay" id="transition"></div>
 
@@ -342,23 +420,23 @@
 
   <main class="display-content" id="display-main">
     <div class="empty-display" id="empty-msg">
-      <div class="empty-emoji">🎭</div>
-      <div class="empty-title">ยังไม่มีวาร์ปขึ้นจอ</div>
-      <div class="empty-sub">รอสักครู่… กำลังจะมีคนส่งขึ้นมาเร็วๆ นี้!</div>
+      <svg class="empty-icon ui-icon" aria-hidden="true"><use href="#icon-image" /></svg>
+      <div class="empty-title" id="empty-title">ยังไม่มีวาร์ปขึ้นจอ</div>
+      <div class="empty-sub" id="empty-sub">สแกน QR แล้วส่งรูปแรกขึ้นมาได้เลย</div>
     </div>
   </main>
 </div>
 
 <!-- ── Like button ────────────────────────────────────────────────────────── -->
 <div class="like-area" id="like-area" style="display:none">
-  <button class="like-btn" id="like-btn" onclick="sendLike()">❤️</button>
+  <button class="like-btn" id="like-btn" onclick="sendLike()" aria-label="ถูกใจ"><svg class="ui-icon" aria-hidden="true"><use href="#icon-heart" /></svg></button>
   <div class="like-count" id="like-count">0</div>
 </div>
 
 <!-- ── QR Code ──────────────────────────────────────────────────────────── -->
 <div class="qr-container" id="qr-container" style="display:none">
   <img class="qr-img" id="qr-img" src="" alt="QR Code" />
-  <div class="qr-text">แสกนส่งรูป</div>
+  <div class="qr-text">สแกนเพื่อส่งรูป</div>
 </div>
 
 <!-- ── Progress bar ───────────────────────────────────────────────────────── -->
@@ -369,12 +447,21 @@
 <!-- ── Nav dots ───────────────────────────────────────────────────────────── -->
 <div class="nav-dots" id="nav-dots"></div>
 
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="icon-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="m21 15-5-5L5 20"/></symbol>
+  <symbol id="icon-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+  <symbol id="icon-heart" viewBox="0 0 24 24"><path d="M20.8 4.6a5.4 5.4 0 0 0-7.6 0L12 5.8l-1.2-1.2a5.4 5.4 0 1 0-7.6 7.6L12 21l8.8-8.8a5.4 5.4 0 0 0 0-7.6z"/></symbol>
+  <symbol id="icon-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+</svg>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.clouds.min.js"></script>
 <script>
   let items = [], currentIdx = 0;
   let settings = { autoAdvance: true, advanceInterval: 10, eventName: 'WARP CLUB' };
   let progressTimer = null, progressStart = null, progressDuration = 10000;
   let currentId = null;
   let ws;
+  let vantaEffect = null;
 
   // ── Stars ──
   function createStars() {
@@ -395,11 +482,25 @@
 
   // ── Init ──
   async function init() {
-    createStars();
+    initClouds();
     await loadSettings();
     await loadDisplay();
     loadQR();
     connectWS();
+  }
+
+  function initClouds() {
+    if (!window.VANTA?.CLOUDS || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    try {
+      vantaEffect = VANTA.CLOUDS({
+        el:'#vanta-display', mouseControls:true, touchControls:true, gyroControls:false,
+        minHeight:200, minWidth:200, skyColor:0x0b1b33, cloudColor:0x526f84,
+        cloudShadowColor:0x050b14, sunColor:0xdb744c, sunGlareColor:0x724331,
+        sunlightColor:0x8c6a54, speed:0.45,
+      });
+    } catch (error) {
+      console.warn('Vanta unavailable; using the static sky background.', error);
+    }
   }
 
   async function loadQR() {
@@ -456,6 +557,7 @@
           }
         }
       }
+      if (type === 'new_submission' && items.length === 0) refreshEmptyState();
       if (type === 'removed' || type === 'cleared') {
         await loadDisplay();
         if (items.length === 0) { currentIdx = 0; showEmpty(); }
@@ -483,6 +585,23 @@
     document.getElementById('progress-wrap').style.display = 'none';
     clearProgress();
     currentId = null;
+    refreshEmptyState();
+  }
+
+  async function refreshEmptyState() {
+    try {
+      const r = await fetch('/api/stats');
+      const stats = await r.json();
+      const title = document.getElementById('empty-title');
+      const sub = document.getElementById('empty-sub');
+      if (stats.queue > 0) {
+        title.textContent = `มี ${stats.queue} วาร์ปรออนุมัติ`;
+        sub.textContent = 'อนุมัติจากหน้าแอดมิน แล้วรายการจะขึ้นจอนี้ทันที';
+      } else {
+        title.textContent = 'ยังไม่มีวาร์ปขึ้นจอ';
+        sub.textContent = 'สแกน QR แล้วส่งรูปแรกขึ้นมาได้เลย';
+      }
+    } catch {}
   }
 
   function showItem(idx) {
@@ -520,7 +639,7 @@
 
     const photoHTML = item.photo
       ? `<img class="photo-img" src="${item.photo}" alt="${escHtml(item.name)}" />`
-      : `<div class="no-photo-placeholder">👤</div>`;
+      : `<div class="no-photo-placeholder"><svg class="empty-icon ui-icon" aria-hidden="true"><use href="#icon-user" /></svg></div>`;
 
     const tableHTML = item.table
       ? `<div class="table-badge">โต๊ะ ${escHtml(item.table)}</div>`
@@ -544,6 +663,7 @@
           <div class="photo-frame-glow" style="background:${item.borderColor}"></div>
           <div class="photo-frame-border" style="border-color:${item.borderColor}; box-shadow: 0 0 30px ${item.borderColor}, inset 0 0 30px ${item.borderColor}20"></div>
           ${photoHTML}
+          ${tableHTML}
         </div>
       </div>
       <div class="info-section">
@@ -605,13 +725,13 @@
   }
 
   function spawnHeart(ref, fromWS = false) {
-    const emojis = ['❤️','💕','💖','💗','💓','🩷'];
     const count = fromWS ? 3 : 6;
     for (let i = 0; i < count; i++) {
       setTimeout(() => {
         const h = document.createElement('div');
         h.className = 'heart-particle';
-        h.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        h.innerHTML = '<svg class="ui-icon" aria-hidden="true"><use href="#icon-heart" /></svg>';
+        h.style.color = ['#ff6685','#ff87a0','#ffd56a'][Math.floor(Math.random()*3)];
         h.style.fontSize = (18 + Math.random() * 20) + 'px';
         h.style.left = (fromWS ? 60 + Math.random() * 30 : 80 + Math.random() * 10) + 'vw';
         h.style.top = (fromWS ? 40 + Math.random() * 30 : 70 + Math.random() * 10) + 'vh';

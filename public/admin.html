@@ -373,6 +373,13 @@
         </div>
         <label class="toggle"><input type="checkbox" id="set-approval" checked onchange="saveSettings()"><span class="toggle-slider"></span></label>
       </div>
+      <div class="settings-row">
+        <div>
+          <div class="settings-label">บังคับแนบรูป</div>
+          <div class="settings-sub">เปิด = ส่งฟอร์มไม่ได้จนกว่าจะเลือกรูป</div>
+        </div>
+        <label class="toggle"><input type="checkbox" id="set-require-photo" onchange="saveSettings()"><span class="toggle-slider"></span></label>
+      </div>
     </div>
   </div>
 </div>
@@ -535,11 +542,13 @@
     const auto = document.getElementById('set-auto');
     const intv = document.getElementById('set-interval');
     const appr = document.getElementById('set-approval');
+    const requirePhoto = document.getElementById('set-require-photo');
     if (n) n.value = s.eventName || '';
     if (sub) sub.value = s.subtitle || '';
     if (auto) auto.checked = s.autoAdvance !== false;
     if (intv) intv.value = s.advanceInterval || 10;
     if (appr) appr.checked = s.requireApproval !== false;
+    if (requirePhoto) requirePhoto.checked = s.requirePhoto === true;
     // sync navbar auto-approve button
     updateAutoApproveBtn(s.requireApproval === false);
   }
@@ -566,6 +575,7 @@
       autoAdvance: document.getElementById('set-auto')?.checked !== false,
       advanceInterval: parseInt(document.getElementById('set-interval')?.value) || 10,
       requireApproval: newRequireApproval,
+      requirePhoto: document.getElementById('set-require-photo')?.checked === true,
     };
     await api('/api/settings', { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
     updateAutoApproveBtn(!isCurrentlyAuto);
@@ -690,6 +700,7 @@
       autoAdvance: document.getElementById('set-auto').checked,
       advanceInterval: parseInt(document.getElementById('set-interval').value) || 10,
       requireApproval: document.getElementById('set-approval').checked,
+      requirePhoto: document.getElementById('set-require-photo').checked,
     };
     await api('/api/settings', { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
     showToast('💾 บันทึกแล้ว', 'success');
