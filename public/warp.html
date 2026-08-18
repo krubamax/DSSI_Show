@@ -207,7 +207,7 @@
   </style>
 </head>
 <body>
-<div class="page-bg" id="vanta-clouds"></div>
+<div class="page-bg" data-cloud-background></div>
 <div id="toast-container"></div>
 
 <!-- ── Header ─────────────────────────────────────────────────────────────── -->
@@ -343,42 +343,19 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.clouds.min.js"></script>
+<script src="/cloud-background.js"></script>
 <script>
   const WS_URL = `${location.protocol === 'https:' ? 'wss:' : 'ws:'}//${location.host}`;
-  let ws, selectedColor = '#FF1493', croppedBlob = null, requirePhoto = false, vantaEffect = null;
+  let ws, selectedColor = '#FF1493', croppedBlob = null, requirePhoto = false;
 
   // ── Init ──
   async function init() {
-    initClouds();
     await loadSettings();
     await loadStats();
     connectWS();
     setupColorPicker();
     setupPhotoUpload();
     setupMessageCounter();
-  }
-
-  function initClouds() {
-    if (!window.VANTA?.CLOUDS || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    try {
-      vantaEffect = VANTA.CLOUDS({
-        el: '#vanta-clouds',
-        mouseControls: true,
-        touchControls: true,
-        gyroControls: false,
-        minHeight: 200,
-        minWidth: 200,
-        skyColor: 0x68b8e8,
-        cloudColor: 0xddeffa,
-        cloudShadowColor: 0x6e91a8,
-        sunColor: 0xffa96b,
-        sunGlareColor: 0xffd7a1,
-        sunlightColor: 0xffd9a8,
-        speed: 0.55,
-      });
-    } catch (error) {
-      console.warn('Vanta unavailable; using the static sky background.', error);
-    }
   }
 
   async function loadSettings() {

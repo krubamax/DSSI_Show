@@ -357,7 +357,7 @@
 </head>
 <body>
 <!-- ── Background ─────────────────────────────────────────────────────────── -->
-<div class="display-bg" id="vanta-display"></div>
+<div class="display-bg" data-cloud-background></div>
 <div class="stars" id="stars"></div>
 <div class="transition-overlay" id="transition"></div>
 
@@ -402,13 +402,13 @@
 </svg>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.clouds.min.js"></script>
+<script src="/cloud-background.js"></script>
 <script>
   let items = [], currentIdx = 0;
   let settings = { autoAdvance: true, advanceInterval: 10, eventName: 'WARP CLUB' };
   let progressTimer = null, progressStart = null, progressDuration = 10000;
   let currentId = null;
   let ws;
-  let vantaEffect = null;
 
   // ── Stars ──
   function createStars() {
@@ -429,25 +429,10 @@
 
   // ── Init ──
   async function init() {
-    initClouds();
     await loadSettings();
     await loadDisplay();
     loadQR();
     connectWS();
-  }
-
-  function initClouds() {
-    if (!window.VANTA?.CLOUDS || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    try {
-      vantaEffect = VANTA.CLOUDS({
-        el:'#vanta-display', mouseControls:true, touchControls:true, gyroControls:false,
-        minHeight:200, minWidth:200, skyColor:0x6eb6e2, cloudColor:0xe5f2f9,
-        cloudShadowColor:0x789aae, sunColor:0xffad63, sunGlareColor:0xffd7a1,
-        sunlightColor:0xffdfb0, speed:0.45,
-      });
-    } catch (error) {
-      console.warn('Vanta unavailable; using the static sky background.', error);
-    }
   }
 
   async function loadQR() {

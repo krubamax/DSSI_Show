@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DSSI • แอดมิน</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800;900&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" />
   <link rel="stylesheet" href="/style.css" />
   <style>
     body { background: #060614; overflow-x: hidden; }
@@ -244,9 +244,41 @@
     .auto-approve-btn.on .auto-approve-dot {
       animation: pulse-live 1.5s infinite;
     }
+
+    /* ── Global cloud system ── */
+    body { background:transparent; font-family:'IBM Plex Sans Thai',sans-serif; min-height:100vh; }
+    .btn, .tab-btn, .auto-approve-btn, .form-input, .form-textarea { font-family:inherit; }
+    #login-overlay { background:rgba(7,25,43,.34); backdrop-filter:blur(18px); }
+    .login-box, .settings-card, .submission-card, .modal-box {
+      background:rgba(8,27,48,.55); border-color:rgba(255,255,255,.22);
+      box-shadow:0 20px 60px rgba(7,25,43,.24); backdrop-filter:blur(24px) saturate(120%);
+    }
+    .login-logo, .navbar-brand span {
+      font-family:'Chakra Petch',sans-serif; color:white; letter-spacing:.08em;
+      background:none; -webkit-text-fill-color:currentColor;
+    }
+    .login-sub { color:rgba(255,255,255,.68); }
+    .navbar {
+      background:rgba(7,25,43,.48); border-color:rgba(255,255,255,.2);
+      box-shadow:0 12px 40px rgba(7,25,43,.18); backdrop-filter:blur(24px) saturate(120%);
+    }
+    .tabs { background:rgba(7,25,43,.24); border-color:rgba(255,255,255,.18); backdrop-filter:blur(14px); }
+    .tab-btn { color:rgba(255,255,255,.7); }
+    .tab-btn.active { background:rgba(255,255,255,.14); border-bottom-color:#ffd56a; }
+    .approve-bar { background:rgba(8,27,48,.42); border-color:rgba(255,255,255,.2); color:rgba(255,255,255,.8); backdrop-filter:blur(18px); }
+    .settings-card { border-radius:20px; }
+    .submission-card { border-radius:20px; }
+    .qr-url { background:rgba(8,27,48,.46); border-color:rgba(255,255,255,.22); backdrop-filter:blur(18px); }
+    #qr-image { background:white; padding:10px; }
+    @media (max-width:720px) {
+      .navbar { padding:12px; }
+      .navbar-actions { margin-left:0; width:100%; }
+      .tab-content { padding:14px; }
+    }
   </style>
 </head>
 <body>
+<div data-cloud-background></div>
 <div id="toast-container"></div>
 
 <!-- ── Login Modal ────────────────────────────────────────────────────────── -->
@@ -415,6 +447,9 @@
   </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.clouds.min.js"></script>
+<script src="/cloud-background.js"></script>
 <script>
   let TOKEN = '';
   let qrUrl = '';

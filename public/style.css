@@ -25,6 +25,26 @@
 
 html { scroll-behavior: smooth; }
 
+.global-cloud-background {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 55% at 75% 18%, rgba(255,255,255,.28), transparent 62%),
+    radial-gradient(ellipse 65% 50% at 10% 85%, rgba(117,184,223,.42), transparent 65%),
+    linear-gradient(165deg, #91cef0, #5d9fca 72%);
+}
+
+.global-cloud-background::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(16,51,78,.02), rgba(16,51,78,.3));
+  pointer-events: none;
+}
+
 body {
   font-family: 'Prompt', sans-serif;
   background: var(--bg);
