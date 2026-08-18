@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DSSI — Wall Mode</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800;900&display=swap" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Prompt', sans-serif;
+      background: #060614;
+      color: white;
+      min-height: 100vh;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wall-bg {
+      position: fixed; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 10% 20%, rgba(120,0,200,0.4) 0%, transparent 55%),
+        radial-gradient(ellipse 60% 50% at 90% 80%, rgba(255,20,147,0.25) 0%, transparent 55%),
+        linear-gradient(180deg, #0a0520 0%, #060614 100%);
+    }
+
+    /* ── Header ── */
+    .wall-header {
+      position: relative; z-index: 10;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 28px;
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .wall-logo {
+      font-size: 22px; font-weight: 900; letter-spacing: 0.05em;
+      background: linear-gradient(135deg, #FF1493, #FFD700);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .wall-live {
+      display: flex; align-items: center; gap: 6px;
+      color: #FF3B30; font-size: 13px; font-weight: 700;
+      animation: pulse-live 2s infinite;
+    }
+    .live-dot { width: 8px; height: 8px; background: #FF3B30; border-radius: 50%; }
+    @keyframes pulse-live {
+      0%, 100% { opacity: 1; } 50% { opacity: 0.5; }
+    }
+
+    /* ── Grid ── */
+    .wall-grid {
+      position: relative; z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+      padding: 16px 20px;
+      height: calc(100vh - 62px);
+      overflow-y: auto;
+      align-content: start;
+    }
+
+    /* ── Wall Card ── */
+    .wall-card {
+      position: relative;
+      border-radius: 14px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.04);
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      animation: pop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+    @keyframes pop-in {
+      from { opacity: 0; transform: scale(0.7); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .wall-card:hover { transform: scale(1.05); z-index: 5; }
+
+    .wall-card-photo {
+      width: 100%;
+      aspect-ratio: 3/4;
+      object-fit: cover;
+      display: block;
+    }
+    .wall-card-nophoto {
+      width: 100%; aspect-ratio: 3/4;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,0.05);
+      font-size: 40px;
+    }
+    .wall-card-footer {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
+      padding: 20px 10px 10px;
+    }
+    .wall-card-name {
+      font-size: 14px; font-weight: 700;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .wall-card-table {
+      font-size: 11px; color: rgba(255,255,255,0.5);
+    }
+    .wall-card-likes {
+      position: absolute; top: 8px; right: 8px;
+      background: rgba(0,0,0,0.6);
+      border-radius: 50px;
+      padding: 2px 8px;
+      font-size: 12px;
+    }
+    .wall-card-border {
+      position: absolute; inset: 0;
+      border-radius: 12px;
+      border: 3px solid;
+      pointer-events: none;
+    }
+
+    /* ── Empty ── */
+    .wall-empty {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 12px; color: rgba(255,255,255,0.3);
+    }
+    .wall-empty-icon { font-size: 60px; }
+    .wall-empty-text { font-size: 18px; font-weight: 700; }
+
+    /* ── Detail Modal ── */
+    .detail-modal {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.8); backdrop-filter: blur(16px);
+      display: none; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .detail-modal.open { display: flex; }
+    .detail-inner {
+      max-width: 480px; width: 100%;
+      background: #0f0f24; border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.12);
+      overflow: hidden;
+      animation: pop-in 0.3s ease;
+    }
+    .detail-photo { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; }
+    .detail-body { padding: 20px; }
+    .detail-name { font-size: 24px; font-weight: 800; margin-bottom: 8px; }
+    .detail-msg { font-size: 14px; color: rgba(255,255,255,0.7); margin-bottom: 14px; line-height: 1.5; }
+    .detail-socials { display: flex; flex-direction: column; gap: 8px; }
+    .detail-chip {
+      display: flex; align-items: center; gap: 10px;
+      border-radius: 50px; padding: 10px 18px;
+      font-size: 15px; font-weight: 700;
+    }
+    .detail-close {
+      position: absolute; top: 14px; right: 14px;
+      background: rgba(0,0,0,0.6); border: none; color: white;
+      border-radius: 50%; width: 36px; height: 36px; cursor: pointer; font-size: 18px;
+    }
+    .detail-like-btn {
+      width: 100%; margin-top: 16px; padding: 14px;
+      background: linear-gradient(135deg, #FF1493, #C2185B);
+      border: none; border-radius: 50px; color: white;
+      font-family: 'Prompt', sans-serif; font-size: 16px; font-weight: 700;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .detail-like-btn:hover { transform: scale(1.02); }
+
+    /* Hearts */
+    .heart-particle {
+      position: fixed; pointer-events: none; z-index: 500;
+      animation: float-heart 2.5s ease-out forwards;
+    }
+    @keyframes float-heart {
+      0%   { transform: translateY(0) scale(1); opacity: 1; }
+      100% { transform: translateY(-200px) scale(0.3); opacity: 0; }
+    }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,20,147,0.4); border-radius: 2px; }
+  </style>
+</head>
+<body>
+<div class="wall-bg"></div>
+
+<!-- ── Header ─────────────────────────────────────────────────────────────── -->
+<header class="wall-header">
+  <div class="wall-logo" id="wall-logo">DSSI</div>
+  <div class="wall-live"><div class="live-dot"></div> WALL MODE</div>
+</header>
+
+<!-- ── Grid ──────────────────────────────────────────────────────────────── -->
+<div class="wall-grid" id="wall-grid">
+  <div class="wall-empty" id="wall-empty">
+    <div class="wall-empty-icon">🖼</div>
+    <div class="wall-empty-text">ยังไม่มีวาร์ปขึ้นจอ</div>
+    <div style="font-size:14px; margin-top:4px; color:rgba(255,255,255,0.2)">รอสักครู่...</div>
+  </div>
+</div>
+
+<!-- ── Detail Modal ───────────────────────────────────────────────────────── -->
+<div class="detail-modal" id="detail-modal" onclick="closeDetail(event)">
+  <div class="detail-inner" style="position:relative">
+    <button class="detail-close" onclick="closeModal()">✕</button>
+    <img id="detail-photo" src="" alt="" style="display:none" />
+    <div class="detail-body">
+      <div id="detail-name" class="detail-name"></div>
+      <div id="detail-table" style="font-size:13px; color:rgba(255,255,255,0.4); margin-bottom:8px;"></div>
+      <div id="detail-msg" class="detail-msg" style="display:none"></div>
+      <div class="detail-socials" id="detail-socials"></div>
+      <button class="detail-like-btn" id="detail-like-btn" onclick="likeFromModal()">❤️ ไลก์ <span id="modal-likes">0</span></button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let items = [], currentModalId = null;
+
+  async function init() {
+    await loadSettings();
+    await loadDisplay();
+    connectWS();
+  }
+
+  async function loadSettings() {
+    try {
+      const r = await fetch('/api/settings');
+      const s = await r.json();
+      document.getElementById('wall-logo').textContent = s.eventName || 'DSSI';
+    } catch {}
+  }
+
+  async function loadDisplay() {
+    const r = await fetch('/api/display');
+    items = await r.json();
+    renderWall();
+  }
+
+  function connectWS() {
+    const wsProto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const ws = new WebSocket(`${wsProto}//${location.host}`);
+    ws.onmessage = async ({ data }) => {
+      const { type, data: d } = JSON.parse(data);
+      if (['approved','approved_all','removed','cleared'].includes(type)) await loadDisplay();
+      if (type === 'liked') {
+        const item = items.find(i => i.id === d.id);
+        if (item) { item.likes = d.likes; updateCardLikes(d.id, d.likes); }
+        if (currentModalId === d.id) document.getElementById('modal-likes').textContent = d.likes;
+      }
+      if (type === 'settings_updated') document.getElementById('wall-logo').textContent = d.eventName || 'DSSI';
+    };
+    ws.onclose = () => setTimeout(connectWS, 3000);
+  }
+
+  function renderWall() {
+    const grid = document.getElementById('wall-grid');
+    const empty = document.getElementById('wall-empty');
+    // Remove old cards
+    Array.from(grid.children).forEach(c => { if (c.id !== 'wall-empty') c.remove(); });
+
+    if (items.length === 0) { empty.style.display = 'flex'; return; }
+    empty.style.display = 'none';
+
+    items.forEach((item, i) => {
+      const card = document.createElement('div');
+      card.className = 'wall-card';
+      card.id = `wc-${item.id}`;
+      card.style.animationDelay = `${i * 0.05}s`;
+      card.style.opacity = '0';
+      card.onclick = () => openDetail(item);
+
+      card.innerHTML = `
+        ${item.photo
+          ? `<img class="wall-card-photo" src="${item.photo}" alt="${escHtml(item.name)}" loading="lazy" />`
+          : `<div class="wall-card-nophoto">👤</div>`}
+        <div class="wall-card-border" style="border-color:${item.borderColor}; box-shadow: inset 0 0 20px ${item.borderColor}30, 0 0 20px ${item.borderColor}40"></div>
+        <div class="wall-card-footer">
+          <div class="wall-card-name">${escHtml(item.name)}</div>
+          ${item.table ? `<div class="wall-card-table">โต๊ะ ${escHtml(item.table)}</div>` : ''}
+        </div>
+        <div class="wall-card-likes" id="wl-${item.id}">❤️ ${item.likes}</div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  function updateCardLikes(id, likes) {
+    const el = document.getElementById(`wl-${id}`);
+    if (el) el.textContent = `❤️ ${likes}`;
+  }
+
+  // ── Modal ──
+  function openDetail(item) {
+    currentModalId = item.id;
+    const modal = document.getElementById('detail-modal');
+    const photo = document.getElementById('detail-photo');
+    if (item.photo) { photo.src = item.photo; photo.style.display = 'block'; }
+    else { photo.style.display = 'none'; }
+
+    document.getElementById('detail-name').textContent = item.name;
+    document.getElementById('detail-table').textContent = item.table ? `โต๊ะ ${item.table}` : '';
+
+    const msgEl = document.getElementById('detail-msg');
+    if (item.message) { msgEl.textContent = item.message; msgEl.style.display = 'block'; }
+    else { msgEl.style.display = 'none'; }
+
+    const socials = document.getElementById('detail-socials');
+    socials.innerHTML = '';
+    if (item.ig) socials.innerHTML += `<div class="detail-chip" style="background:linear-gradient(135deg,#f09433,#dc2743,#bc1888)">📸 @${escHtml(item.ig)}</div>`;
+    if (item.facebook) socials.innerHTML += `<div class="detail-chip" style="background:#1877F2">💙 ${escHtml(item.facebook)}</div>`;
+
+    document.getElementById('modal-likes').textContent = item.likes;
+    modal.classList.add('open');
+  }
+
+  function closeModal() { document.getElementById('detail-modal').classList.remove('open'); currentModalId = null; }
+  function closeDetail(e) { if (e.target === document.getElementById('detail-modal')) closeModal(); }
+
+  async function likeFromModal() {
+    if (!currentModalId) return;
+    const btn = document.getElementById('detail-like-btn');
+    btn.style.transform = 'scale(1.05)';
+    setTimeout(() => btn.style.transform = '', 200);
+    spawnHeart();
+    try { await fetch(`/api/like/${currentModalId}`, { method: 'POST' }); } catch {}
+  }
+
+  function spawnHeart() {
+    const emojis = ['❤️','💕','💖','💗'];
+    for (let i = 0; i < 8; i++) {
+      setTimeout(() => {
+        const h = document.createElement('div');
+        h.className = 'heart-particle';
+        h.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        h.style.fontSize = (16 + Math.random() * 16) + 'px';
+        h.style.left = 30 + Math.random() * 40 + 'vw';
+        h.style.top = 50 + Math.random() * 30 + 'vh';
+        document.body.appendChild(h);
+        setTimeout(() => h.remove(), 2600);
+      }, i * 100);
+    }
+  }
+
+  function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  init();
+</script>
+</body>
+</html>

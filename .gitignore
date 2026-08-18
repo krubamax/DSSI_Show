@@ -1,0 +1,38 @@
+# ── Node.js ──────────────────────────────────────────────
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ── Uploads (รูปที่ user ส่งเข้ามา) ─────────────────────
+uploads/
+
+# ── Environment variables ─────────────────────────────────
+.env
+.env.local
+.env.*.local
+
+# ── OS files ─────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Editor / IDE ─────────────────────────────────────────
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# ── Logs ─────────────────────────────────────────────────
+logs/
+*.log
+
+# ── Python (มีไฟล์ main.py ใน project) ──────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+venv/
+.venv/

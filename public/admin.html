@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DSSI • แอดมิน</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800;900&display=swap" />
+  <link rel="stylesheet" href="/style.css" />
+  <style>
+    body { background: #060614; overflow-x: hidden; }
+
+    /* ── Login overlay ── */
+    #login-overlay {
+      position: fixed; inset: 0; z-index: 999;
+      background: radial-gradient(ellipse at center, #1a0040, #060614);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .login-box {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 40px 36px;
+      width: 340px;
+      backdrop-filter: blur(20px);
+      text-align: center;
+      animation: fadeInUp 0.4s ease;
+    }
+    .login-logo { font-size: 28px; font-weight: 900; background: linear-gradient(135deg, #FF1493, #FFD700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .login-sub { font-size: 13px; color: rgba(255,255,255,0.4); margin-bottom: 28px; }
+
+    /* ── Top navbar ── */
+    .navbar {
+      display: flex; align-items: center;
+      padding: 12px 20px;
+      background: rgba(255,255,255,0.03);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      gap: 12px;
+      flex-wrap: wrap;
+      position: sticky; top: 0; z-index: 100;
+      backdrop-filter: blur(20px);
+    }
+    .navbar-brand { font-size: 18px; font-weight: 800; color: white; display: flex; align-items: center; gap: 8px; }
+    .navbar-brand span { background: linear-gradient(135deg, #FF1493, #FFD700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .navbar-stats { display: flex; gap: 8px; flex-wrap: wrap; }
+    .navbar-actions { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; }
+
+    /* ── Tabs ── */
+    .tabs {
+      display: flex; gap: 4px;
+      padding: 12px 20px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      overflow-x: auto;
+    }
+    .tab-btn {
+      padding: 10px 18px;
+      border-radius: 10px 10px 0 0;
+      border: none;
+      background: none;
+      color: rgba(255,255,255,0.45);
+      cursor: pointer;
+      font-family: 'Prompt', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      display: flex; align-items: center; gap: 6px;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+    .tab-btn:hover { color: white; background: rgba(255,255,255,0.05); }
+    .tab-btn.active {
+      color: white;
+      background: rgba(255,20,147,0.1);
+      border-bottom: 2px solid #FF1493;
+    }
+    .tab-count {
+      background: rgba(255,20,147,0.2);
+      color: #FF1493;
+      border-radius: 50px;
+      padding: 1px 7px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .tab-count.green { background: rgba(0,200,83,0.15); color: #00C853; }
+
+    /* ── Tab content ── */
+    .tab-content { display: none; padding: 20px; }
+    .tab-content.active { display: block; }
+
+    /* ── Approve all bar ── */
+    .approve-bar {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 16px;
+      padding: 10px 14px;
+      background: rgba(0,200,83,0.06);
+      border: 1px solid rgba(0,200,83,0.15);
+      border-radius: 10px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.6);
+    }
+
+    /* ── Queue cards ── */
+    .queue-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 14px;
+    }
+    .submission-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: var(--transition);
+      animation: fadeInUp 0.3s ease;
+    }
+    .submission-card:hover { border-color: rgba(255,20,147,0.3); transform: translateY(-2px); }
+    .card-photo {
+      width: 100%; aspect-ratio: 3/4;
+      object-fit: cover;
+      display: block;
+    }
+    .card-no-photo {
+      width: 100%; aspect-ratio: 3/4;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,0.03);
+      font-size: 48px; color: rgba(255,255,255,0.15);
+    }
+    .card-body { padding: 14px; }
+    .card-name { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+    .card-table { font-size: 12px; color: rgba(255,255,255,0.45); margin-bottom: 8px; }
+    .card-message {
+      font-size: 13px; color: rgba(255,255,255,0.65);
+      border-left: 3px solid rgba(255,255,255,0.1);
+      padding-left: 10px; margin-bottom: 10px;
+      display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .card-socials { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+    .card-social-row {
+      font-size: 12px; color: rgba(255,255,255,0.5);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .card-actions { display: flex; gap: 8px; }
+    .card-border-preview {
+      height: 4px;
+      width: 100%;
+    }
+    .card-time { font-size: 11px; color: rgba(255,255,255,0.3); margin-bottom: 8px; }
+
+    /* ── Empty state ── */
+    .empty-state {
+      text-align: center; padding: 60px 20px;
+      color: rgba(255,255,255,0.3);
+    }
+    .empty-state-icon { font-size: 48px; margin-bottom: 12px; }
+    .empty-state-text { font-size: 16px; font-weight: 600; margin-bottom: 4px; color: rgba(255,255,255,0.4); }
+    .empty-state-sub { font-size: 13px; }
+
+    /* ── Settings ── */
+    .settings-grid { display: grid; gap: 20px; max-width: 600px; }
+    .settings-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 20px; }
+    .settings-title { font-size: 14px; font-weight: 700; margin-bottom: 16px; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 0.05em; }
+    .settings-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .settings-row:last-child { border-bottom: none; }
+    .settings-label { font-size: 14px; font-weight: 500; }
+    .settings-sub { font-size: 12px; color: rgba(255,255,255,0.4); }
+    /* Toggle */
+    .toggle { position: relative; width: 46px; height: 26px; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute; inset: 0;
+      background: rgba(255,255,255,0.15);
+      border-radius: 13px; cursor: pointer; transition: .3s;
+    }
+    .toggle-slider::before {
+      content: ''; position: absolute;
+      width: 20px; height: 20px; left: 3px; top: 3px;
+      background: white; border-radius: 50%; transition: .3s;
+    }
+    .toggle input:checked + .toggle-slider { background: #FF1493; }
+    .toggle input:checked + .toggle-slider::before { transform: translateX(20px); }
+    .interval-input { width: 80px; text-align: center; }
+
+    /* ── QR Tab ── */
+    .qr-container { text-align: center; max-width: 400px; margin: 0 auto; }
+    #qr-image { width: 250px; height: 250px; border-radius: 16px; margin: 20px auto; display: block; }
+    .qr-url {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 14px; word-break: break-all;
+      cursor: pointer;
+    }
+    .qr-url:hover { background: rgba(255,255,255,0.1); }
+
+    /* ── Modal ── */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 500;
+      background: rgba(0,0,0,0.7); backdrop-filter: blur(10px);
+      display: none; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: #0f0f24; border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 20px; padding: 28px;
+      max-width: 500px; width: 100%;
+      animation: notification-pop 0.3s ease;
+    }
+    .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+    /* notification dot */
+    .notif-dot {
+      width: 10px; height: 10px; background: #FF1493;
+      border-radius: 50%; animation: pulse-live 1.5s infinite;
+      display: inline-block; margin-left: 4px;
+    }
+
+    /* ── Auto-approve toggle btn ── */
+    .auto-approve-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 16px;
+      border-radius: 50px;
+      border: 2px solid rgba(0,200,83,0.3);
+      background: rgba(0,200,83,0.08);
+      color: rgba(255,255,255,0.5);
+      font-family: 'Prompt', sans-serif;
+      font-size: 13px; font-weight: 700;
+      cursor: pointer;
+      transition: all 0.25s;
+      white-space: nowrap;
+    }
+    .auto-approve-btn.on {
+      background: linear-gradient(135deg, #00C853, #00897B);
+      border-color: transparent;
+      color: white;
+      box-shadow: 0 4px 16px rgba(0,200,83,0.4);
+    }
+    .auto-approve-btn:hover { transform: translateY(-1px); }
+    .auto-approve-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: currentColor; flex-shrink: 0;
+    }
+    .auto-approve-btn.on .auto-approve-dot {
+      animation: pulse-live 1.5s infinite;
+    }
+  </style>
+</head>
+<body>
+<div id="toast-container"></div>
+
+<!-- ── Login Modal ────────────────────────────────────────────────────────── -->
+<div id="login-overlay">
+  <div class="login-box">
+    <div class="login-logo">DSSI • แอดมิน</div>
+    <div class="login-sub" style="margin-top:4px;">กรุณาใส่รหัสผ่านเพื่อเข้าใช้งาน</div>
+    <div style="height:24px"></div>
+    <div class="form-group">
+      <input id="pw-input" class="form-input" type="password" placeholder="รหัสผ่าน" onkeydown="if(event.key==='Enter') doLogin()" />
+    </div>
+    <div style="height:12px"></div>
+    <button class="btn btn-primary" style="width:100%" onclick="doLogin()">เข้าสู่ระบบ</button>
+    <div id="login-err" style="color:#FF5252; font-size:13px; margin-top:10px; display:none">รหัสผ่านไม่ถูกต้อง</div>
+  </div>
+</div>
+
+<!-- ── Navbar ─────────────────────────────────────────────────────────────── -->
+<nav class="navbar">
+  <div class="navbar-brand"><span>DSSI</span> • แอดมิน</div>
+  <div class="navbar-stats">
+    <div class="stat-badge">🎭 รออนุมัติ <strong id="nb-queue">0</strong></div>
+    <div class="stat-badge">📺 บนจอ <strong id="nb-display">0</strong></div>
+    <div class="stat-badge">❤️ <strong id="nb-likes">0</strong></div>
+  </div>
+  <div class="navbar-actions">
+    <button class="btn btn-ghost btn-sm" onclick="window.open('/warp','_blank')" title="ดูฟอร์ม">📏 ฟอร์ม</button>
+    <button class="btn btn-purple btn-sm" onclick="window.open('/wall','_blank')" title="Wall mode">🖼 Wall</button>
+    <button class="btn btn-yellow btn-sm" onclick="window.open('/display','_blank')" title="หน้าจอ">📺 จอ</button>
+    <button class="auto-approve-btn" id="auto-approve-btn" onclick="toggleAutoApprove()" title="สลับอนุมัติอัตโนมัติ">
+      <div class="auto-approve-dot"></div>
+      <span id="auto-approve-label">อนุมัติอัตโนมัติ: ปิด</span>
+    </button>
+    <button class="btn btn-danger btn-sm" onclick="confirmClear()" title="เคลียร์จอ">🗑 เคลียร์</button>
+    <button class="btn btn-ghost btn-sm" onclick="doLogout()">ออก</button>
+  </div>
+</nav>
+
+<!-- ── Tabs ───────────────────────────────────────────────────────────────── -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('queue')" id="tab-queue">
+    🎭 คิวรออนุมัติ <span class="tab-count" id="tc-queue">0</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('display')" id="tab-display">
+    📺 บนจอ <span class="tab-count green" id="tc-display">0</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('banned')" id="tab-banned">
+    🚫 บนจอ (บล็อก) <span class="tab-count" id="tc-banned">0</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('settings')" id="tab-settings">⚙️ ตั้งค่าจอ</button>
+  <button class="tab-btn" onclick="switchTab('qr')" id="tab-qr">🔗 QR / ลิงก์</button>
+</div>
+
+<!-- ── Queue Tab ──────────────────────────────────────────────────────────── -->
+<div class="tab-content active" id="content-queue">
+  <div class="approve-bar">
+    <button class="btn btn-success btn-sm" id="approve-all-btn" onclick="approveAll()">✅ อนุมัติทั้งหมด</button>
+    <span id="approve-bar-text">กดเพื่ออนุมัติทุกรายการในคิว</span>
+    <span style="margin-left:auto; font-size:11px; color:rgba(255,255,255,0.3)">ลบ reset ทุก 4 วินาที · ดูรูปก่อนอนุมัติ</span>
+  </div>
+  <div class="queue-grid" id="queue-list">
+    <div class="empty-state" id="queue-empty" style="grid-column:1/-1">
+      <div class="empty-state-icon">🎉</div>
+      <div class="empty-state-text">ไม่มีคิวรออนุมัติ — เคลียร์หมดแล้ว!</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Display Tab ────────────────────────────────────────────────────────── -->
+<div class="tab-content" id="content-display">
+  <div class="queue-grid" id="display-list">
+    <div class="empty-state" id="display-empty" style="grid-column:1/-1">
+      <div class="empty-state-icon">📺</div>
+      <div class="empty-state-text">ยังไม่มีอะไรบนจอ</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Banned Tab ─────────────────────────────────────────────────────────── -->
+<div class="tab-content" id="content-banned">
+  <div class="queue-grid" id="banned-list">
+    <div class="empty-state" id="banned-empty" style="grid-column:1/-1">
+      <div class="empty-state-icon">🚫</div>
+      <div class="empty-state-text">ไม่มีรายการที่บล็อก</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Settings Tab ───────────────────────────────────────────────────────── -->
+<div class="tab-content" id="content-settings">
+  <div class="settings-grid">
+    <div class="settings-card">
+      <div class="settings-title">ข้อมูล Event</div>
+      <div class="form-group" style="margin-bottom:12px">
+        <label class="form-label">ชื่อ Event</label>
+        <input class="form-input" id="set-name" value="DSSI" placeholder="ชื่อ Event" />
+      </div>
+      <div class="form-group" style="margin-bottom:12px">
+        <label class="form-label">Subtitle</label>
+        <input class="form-input" id="set-subtitle" value="ส่งรูป ส่งใจ ขึ้นจอเลย" placeholder="ข้อความ subtitle" />
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="saveSettings()">💾 บันทึก</button>
+    </div>
+    <div class="settings-card">
+      <div class="settings-title">ตั้งค่าจอ</div>
+      <div class="settings-row">
+        <div>
+          <div class="settings-label">Auto-advance</div>
+          <div class="settings-sub">เลื่อนวาร์ปอัตโนมัติ</div>
+        </div>
+        <label class="toggle"><input type="checkbox" id="set-auto" checked onchange="saveSettings()"><span class="toggle-slider"></span></label>
+      </div>
+      <div class="settings-row">
+        <div>
+          <div class="settings-label">ระยะเวลาต่อวาร์ป</div>
+          <div class="settings-sub">วินาที</div>
+        </div>
+        <input class="form-input interval-input" id="set-interval" type="number" value="10" min="3" max="120" onchange="saveSettings()" />
+      </div>
+      <div class="settings-row">
+        <div>
+          <div class="settings-label">ต้องอนุมัติก่อนขึ้นจอ</div>
+          <div class="settings-sub">ปิด = ขึ้นจอทันที</div>
+        </div>
+        <label class="toggle"><input type="checkbox" id="set-approval" checked onchange="saveSettings()"><span class="toggle-slider"></span></label>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── QR Tab ─────────────────────────────────────────────────────────────── -->
+<div class="tab-content" id="content-qr">
+  <div class="qr-container">
+    <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">QR Code สำหรับ form</div>
+    <div style="font-size: 13px; color: rgba(255,255,255,0.4); margin-bottom: 16px;">ให้ผู้เข้าร่วมสแกนเพื่อส่งวาร์ป</div>
+    <div style="background: rgba(255,255,255,0.06); border-radius:16px; padding: 24px; display:inline-block;">
+      <img id="qr-image" src="" alt="QR Code" style="width:220px; height:220px; display:block; border-radius:8px;" />
+    </div>
+    <div style="margin-top: 16px; font-size: 13px; color: rgba(255,255,255,0.4);">ลิงก์</div>
+    <div class="qr-url" id="qr-url" onclick="copyLink()" title="คลิกเพื่อคัดลอก">
+      กำลังโหลด...
+    </div>
+    <div style="margin-top: 8px; font-size: 12px; color: rgba(255,255,255,0.3);">คลิกเพื่อคัดลอกลิงก์</div>
+    <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+      <button class="btn btn-ghost btn-sm" onclick="downloadQR()">⬇️ ดาวน์โหลด QR</button>
+      <button class="btn btn-primary btn-sm" onclick="copyLink()">📋 คัดลอกลิงก์</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Clear Modal ────────────────────────────────────────────────────────── -->
+<div class="modal-overlay" id="clear-modal">
+  <div class="modal-box">
+    <div class="modal-title">🗑 เคลียร์หน้าจอ?</div>
+    <div style="font-size:14px; color:rgba(255,255,255,0.6)">รายการทั้งหมดบนจอจะถูกลบ แต่ข้อมูลคิวยังอยู่</div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost btn-sm" onclick="closeClearModal()">ยกเลิก</button>
+      <button class="btn btn-danger btn-sm" onclick="doClear()">เคลียร์เลย</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let TOKEN = '';
+  let qrUrl = '';
+
+  // ── Login ──
+  async function doLogin() {
+    const pw = document.getElementById('pw-input').value;
+    try {
+      const r = await fetch('/api/admin/login', {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ password: pw })
+      });
+      const d = await r.json();
+      if (!r.ok) throw new Error();
+      TOKEN = d.token;
+      document.getElementById('login-overlay').style.display = 'none';
+      init();
+    } catch {
+      document.getElementById('login-err').style.display = 'block';
+    }
+  }
+
+  function doLogout() {
+    TOKEN = '';
+    location.reload();
+  }
+
+  // ── API helpers ──
+  const api = (url, opts = {}) => fetch(url, { ...opts, headers: { ...opts.headers, 'x-admin-token': TOKEN } });
+
+  // ── Init ──
+  async function init() {
+    await Promise.all([loadQueue(), loadDisplay(), loadBanned(), loadSettings(), loadQR()]);
+    connectWS();
+    // sound for new submissions
+    setupSoundContext();
+  }
+
+  // ── WebSocket ──
+  function connectWS() {
+    const wsProto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const ws = new WebSocket(`${wsProto}//${location.host}`);
+    ws.onmessage = ({ data }) => {
+      const { type, data: d } = JSON.parse(data);
+      if (type === 'new_submission') { loadQueue(); loadStats(); playNotifSound(); showToast(`🔔 มีวาร์ปใหม่จาก ${d.item.name}!`, 'info'); }
+      if (type === 'approved' || type === 'approved_all') { loadQueue(); loadDisplay(); loadStats(); }
+      if (type === 'rejected') { loadQueue(); loadBanned(); loadStats(); }
+      if (type === 'removed') { loadDisplay(); loadStats(); }
+      if (type === 'cleared') { loadDisplay(); loadStats(); }
+      if (type === 'liked') updateLikes(d.id, d.likes);
+      if (type === 'settings_updated') applySettings(d);
+    };
+    ws.onclose = () => setTimeout(connectWS, 3000);
+  }
+
+  // ── Sound ──
+  let audioCtx;
+  function setupSoundContext() {
+    document.addEventListener('click', () => {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }, { once: true });
+  }
+  function playNotifSound() {
+    if (!audioCtx) return;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.type = 'sine'; osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(1320, audioCtx.currentTime + 0.1);
+    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+    osc.start(); osc.stop(audioCtx.currentTime + 0.4);
+  }
+
+  // ── Load data ──
+  async function loadQueue() {
+    const r = await api('/api/queue');
+    const items = await r.json();
+    renderCards('queue-list', 'queue-empty', items, 'queue');
+    const n = items.length;
+    document.getElementById('nb-queue').textContent = n;
+    document.getElementById('tc-queue').textContent = n;
+    document.getElementById('approve-bar-text').textContent =
+      n > 0 ? `อนุมัติทั้งหมด ${n} รายการ` : 'ไม่มีคิวรออนุมัติ';
+  }
+
+  async function loadDisplay() {
+    const r = await fetch('/api/display');
+    const items = await r.json();
+    renderCards('display-list', 'display-empty', items, 'display');
+    const n = items.length;
+    document.getElementById('nb-display').textContent = n;
+    document.getElementById('tc-display').textContent = n;
+  }
+
+  async function loadBanned() {
+    const r = await api('/api/banned');
+    const items = await r.json();
+    renderCards('banned-list', 'banned-empty', items, 'banned');
+    document.getElementById('tc-banned').textContent = items.length;
+  }
+
+  async function loadStats() {
+    try {
+      const r = await api('/api/stats');
+      const s = await r.json();
+      document.getElementById('nb-queue').textContent = s.queue;
+      document.getElementById('nb-display').textContent = s.display;
+      document.getElementById('nb-likes').textContent = s.totalLikes;
+      document.getElementById('tc-queue').textContent = s.queue;
+      document.getElementById('tc-display').textContent = s.display;
+    } catch {}
+  }
+
+  async function loadSettings() {
+    const r = await fetch('/api/settings');
+    const s = await r.json();
+    applySettings(s);
+  }
+
+  function applySettings(s) {
+    const n = document.getElementById('set-name');
+    const sub = document.getElementById('set-subtitle');
+    const auto = document.getElementById('set-auto');
+    const intv = document.getElementById('set-interval');
+    const appr = document.getElementById('set-approval');
+    if (n) n.value = s.eventName || '';
+    if (sub) sub.value = s.subtitle || '';
+    if (auto) auto.checked = s.autoAdvance !== false;
+    if (intv) intv.value = s.advanceInterval || 10;
+    if (appr) appr.checked = s.requireApproval !== false;
+    // sync navbar auto-approve button
+    updateAutoApproveBtn(s.requireApproval === false);
+  }
+
+  function updateAutoApproveBtn(isAutoOn) {
+    const btn = document.getElementById('auto-approve-btn');
+    const label = document.getElementById('auto-approve-label');
+    if (!btn) return;
+    if (isAutoOn) {
+      btn.classList.add('on');
+      label.textContent = 'อนุมัติอัตโนมัติ: เปิด ⚡';
+    } else {
+      btn.classList.remove('on');
+      label.textContent = 'อนุมัติอัตโนมัติ: ปิด';
+    }
+  }
+
+  async function toggleAutoApprove() {
+    const isCurrentlyAuto = document.getElementById('auto-approve-btn').classList.contains('on');
+    const newRequireApproval = isCurrentlyAuto; // flip: if auto was ON, now need approval (requireApproval=true)
+    const body = {
+      eventName: document.getElementById('set-name')?.value || 'DSSI',
+      subtitle: document.getElementById('set-subtitle')?.value || '',
+      autoAdvance: document.getElementById('set-auto')?.checked !== false,
+      advanceInterval: parseInt(document.getElementById('set-interval')?.value) || 10,
+      requireApproval: newRequireApproval,
+    };
+    await api('/api/settings', { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
+    updateAutoApproveBtn(!isCurrentlyAuto);
+    // sync settings toggle too
+    const apprEl = document.getElementById('set-approval');
+    if (apprEl) apprEl.checked = newRequireApproval;
+    showToast(!isCurrentlyAuto ? '⚡ อนุมัติอัตโนมัติ เปิดแล้ว!' : '⏸ อนุมัติอัตโนมัติ ปิดแล้ว', !isCurrentlyAuto ? 'success' : 'warning');
+  }
+
+  async function loadQR() {
+    try {
+      const r = await api('/api/qrcode');
+      const d = await r.json();
+      document.getElementById('qr-image').src = d.qr;
+      document.getElementById('qr-url').textContent = d.url;
+      qrUrl = d.url;
+    } catch {}
+  }
+
+  // ── Render cards ──
+  function timeAgo(iso) {
+    const diff = (Date.now() - new Date(iso)) / 1000;
+    if (diff < 60) return `${Math.floor(diff)} วิที่แล้ว`;
+    if (diff < 3600) return `${Math.floor(diff/60)} นาทีที่แล้ว`;
+    return `${Math.floor(diff/3600)} ชม.ที่แล้ว`;
+  }
+
+  function renderCards(listId, emptyId, items, type) {
+    const list = document.getElementById(listId);
+    const empty = document.getElementById(emptyId);
+    // Remove old cards
+    Array.from(list.children).forEach(c => { if (c.id !== emptyId) c.remove(); });
+
+    if (items.length === 0) {
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+
+    items.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'submission-card';
+      card.id = `card-${item.id}`;
+      const igRow = item.ig ? `<div class="card-social-row"><span style="font-size:14px">📸</span> @${escHtml(item.ig)}</div>` : '';
+      const fbRow = item.facebook ? `<div class="card-social-row"><span style="font-size:14px">💙</span> ${escHtml(item.facebook)}</div>` : '';
+      const socials = (igRow || fbRow) ? `<div class="card-socials">${igRow}${fbRow}</div>` : '';
+      const actionsHTML = type === 'queue' ? `
+        <button class="btn btn-success btn-sm" style="flex:1" onclick="approveOne('${item.id}')">✅ อนุมัติ</button>
+        <button class="btn btn-danger btn-sm" style="flex:1" onclick="rejectOne('${item.id}')">🚫 ไม่ผ่าน</button>
+      ` : type === 'display' ? `
+        <div style="display:flex; align-items:center; gap:6px; font-size:13px; color:rgba(255,255,255,0.5)">❤️ <strong id="likes-${item.id}">${item.likes}</strong></div>
+        <button class="btn btn-danger btn-sm" onclick="removeDisplay('${item.id}')">🗑 นำออก</button>
+      ` : '';
+
+      card.innerHTML = `
+        <div class="card-border-preview" style="background:${item.borderColor}; box-shadow: 0 0 8px ${item.borderColor}"></div>
+        ${item.photo ? `<img class="card-photo" src="${item.photo}" alt="${escHtml(item.name)}" loading="lazy" />` : `<div class="card-no-photo">👤</div>`}
+        <div class="card-body">
+          <div class="card-time">${timeAgo(item.createdAt)}</div>
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+            <div class="card-name">${escHtml(item.name)}</div>
+            ${item.table ? `<span class="badge badge-pink" style="font-size:11px">โต๊ะ ${escHtml(item.table)}</span>` : ''}
+          </div>
+          ${item.message ? `<div class="card-message">${escHtml(item.message)}</div>` : ''}
+          ${socials}
+          ${actionsHTML ? `<div class="card-actions">${actionsHTML}</div>` : ''}
+        </div>
+      `;
+      list.appendChild(card);
+    });
+  }
+
+  function escHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function updateLikes(id, likes) {
+    const el = document.getElementById(`likes-${id}`);
+    if (el) el.textContent = likes;
+    document.getElementById('nb-likes').textContent = parseInt(document.getElementById('nb-likes').textContent || 0) + 1;
+  }
+
+  // ── Actions ──
+  async function approveOne(id) {
+    const card = document.getElementById(`card-${id}`);
+    if (card) { card.style.opacity = '0.5'; card.style.pointerEvents = 'none'; }
+    await api(`/api/approve/${id}`, { method: 'POST' });
+    showToast('✅ อนุมัติแล้ว', 'success');
+  }
+
+  async function approveAll() {
+    const btn = document.getElementById('approve-all-btn');
+    btn.disabled = true; btn.textContent = '⏳ กำลังอนุมัติ...';
+    await api('/api/approve-all', { method: 'POST' });
+    showToast('✅ อนุมัติทั้งหมดแล้ว', 'success');
+    btn.disabled = false; btn.textContent = '✅ อนุมัติทั้งหมด';
+  }
+
+  async function rejectOne(id) {
+    await api(`/api/reject/${id}`, { method: 'POST' });
+    showToast('🚫 ปฏิเสธแล้ว', 'warning');
+  }
+
+  async function removeDisplay(id) {
+    await api(`/api/display/${id}`, { method: 'DELETE' });
+    showToast('🗑 นำออกจากจอแล้ว', 'info');
+  }
+
+  function confirmClear() { document.getElementById('clear-modal').classList.add('open'); }
+  function closeClearModal() { document.getElementById('clear-modal').classList.remove('open'); }
+
+  async function doClear() {
+    await api('/api/clear', { method: 'POST' });
+    closeClearModal();
+    showToast('🗑 เคลียร์จอแล้ว', 'warning');
+  }
+
+  async function saveSettings() {
+    const body = {
+      eventName: document.getElementById('set-name').value,
+      subtitle: document.getElementById('set-subtitle').value,
+      autoAdvance: document.getElementById('set-auto').checked,
+      advanceInterval: parseInt(document.getElementById('set-interval').value) || 10,
+      requireApproval: document.getElementById('set-approval').checked,
+    };
+    await api('/api/settings', { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
+    showToast('💾 บันทึกแล้ว', 'success');
+  }
+
+  function copyLink() {
+    navigator.clipboard.writeText(qrUrl || location.origin + '/warp').then(() => showToast('📋 คัดลอกลิงก์แล้ว', 'success'));
+  }
+
+  function downloadQR() {
+    const img = document.getElementById('qr-image');
+    const a = document.createElement('a');
+    a.href = img.src;
+    a.download = 'warp-qr.png';
+    a.click();
+  }
+
+  // ── Tabs ──
+  function switchTab(name) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    document.getElementById(`tab-${name}`).classList.add('active');
+    document.getElementById(`content-${name}`).classList.add('active');
+    if (name === 'qr' && !document.getElementById('qr-image').src) loadQR();
+  }
+
+  // ── Toast ──
+  function showToast(msg, type = 'info') {
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    t.textContent = msg;
+    document.getElementById('toast-container').appendChild(t);
+    setTimeout(() => t.remove(), 3500);
+  }
+</script>
+</body>
+</html>
