@@ -25,6 +25,7 @@ let settings = {
   autoAdvance: true,
   advanceInterval: 10,
   requireApproval: true,
+  requirePhoto: false,
   theme: 'pink',
 };
 
@@ -78,6 +79,9 @@ app.post('/api/submit', upload.single('photo'), (req, res) => {
   try {
     const { name, table, message, ig, facebook, borderColor } = req.body;
     if (!name || !name.trim()) return res.status(400).json({ error: 'กรุณาใส่ชื่อ' });
+    if (settings.requirePhoto && !req.file) {
+      return res.status(400).json({ error: 'กรุณาแนบรูปก่อนส่ง' });
+    }
 
     const item = {
       id: uuidv4(),
@@ -88,7 +92,6 @@ app.post('/api/submit', upload.single('photo'), (req, res) => {
       facebook: (facebook || '').trim().replace(/^@/, ''),
       borderColor: borderColor || '#FF1493',
       photo: req.file ? `/uploads/${req.file.filename}` : null,
-      likes: 0,
       createdAt: new Date().toISOString(),
       status: 'pending',
     };
@@ -110,15 +113,6 @@ app.post('/api/submit', upload.single('photo'), (req, res) => {
   }
 });
 
-// Like
-app.post('/api/like/:id', (req, res) => {
-  const item = display.find((i) => i.id === req.params.id);
-  if (!item) return res.status(404).json({ error: 'Not found' });
-  item.likes++;
-  broadcast('liked', { id: item.id, likes: item.likes });
-  res.json({ success: true, likes: item.likes });
-});
-
 // Public display items (for display screen)
 app.get('/api/display', (req, res) => res.json(display));
 
@@ -131,7 +125,6 @@ app.get('/api/stats', (req, res) => {
     queue: queue.length,
     display: display.length,
     banned: banned.length,
-    totalLikes: display.reduce((s, i) => s + i.likes, 0),
   });
 });
 
@@ -220,7 +213,7 @@ app.get('/api/qrcode', async (req, res) => {
   const url = `http://${host}/warp`;
   try {
     const qr = await QRCode.toDataURL(url, {
-      color: { dark: '#ffffff', light: '#00000000' },
+      color: { dark: '#000000', light: '#ffffff' },
       width: 300,
       margin: 1,
     });

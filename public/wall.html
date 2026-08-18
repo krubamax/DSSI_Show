@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DSSI — Wall Mode</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800;900&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" />
+  <link rel="stylesheet" href="/style.css" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -33,6 +34,18 @@
       backdrop-filter: blur(20px);
       border-bottom: 1px solid rgba(255,255,255,0.06);
     }
+    .wall-bg {
+      background:
+        radial-gradient(ellipse 70% 55% at 75% 18%,rgba(255,255,255,.28),transparent 62%),
+        radial-gradient(ellipse 65% 50% at 10% 85%,rgba(117,184,223,.42),transparent 65%),
+        linear-gradient(165deg,#91cef0,#5d9fca 72%);
+    }
+    .wall-bg::after {
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(180deg,rgba(16,51,78,.02),rgba(16,51,78,.3));
+      pointer-events:none;
+    }
+    .wall-icon { width:1.2em; height:1.2em; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
     .wall-logo {
       font-size: 22px; font-weight: 900; letter-spacing: 0.05em;
       background: linear-gradient(135deg, #FF1493, #FFD700);
@@ -101,13 +114,6 @@
     .wall-card-table {
       font-size: 11px; color: rgba(255,255,255,0.5);
     }
-    .wall-card-likes {
-      position: absolute; top: 8px; right: 8px;
-      background: rgba(0,0,0,0.6);
-      border-radius: 50px;
-      padding: 2px 8px;
-      font-size: 12px;
-    }
     .wall-card-border {
       position: absolute; inset: 0;
       border-radius: 12px;
@@ -121,7 +127,7 @@
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       gap: 12px; color: rgba(255,255,255,0.3);
     }
-    .wall-empty-icon { font-size: 60px; }
+    .wall-empty-icon { width:64px; height:64px; color:#a9ddf5; }
     .wall-empty-text { font-size: 18px; font-weight: 700; }
 
     /* ── Detail Modal ── */
@@ -154,31 +160,42 @@
       background: rgba(0,0,0,0.6); border: none; color: white;
       border-radius: 50%; width: 36px; height: 36px; cursor: pointer; font-size: 18px;
     }
-    .detail-like-btn {
-      width: 100%; margin-top: 16px; padding: 14px;
-      background: linear-gradient(135deg, #FF1493, #C2185B);
-      border: none; border-radius: 50px; color: white;
-      font-family: 'Prompt', sans-serif; font-size: 16px; font-weight: 700;
-      cursor: pointer; transition: all 0.2s;
-    }
-    .detail-like-btn:hover { transform: scale(1.02); }
-
-    /* Hearts */
-    .heart-particle {
-      position: fixed; pointer-events: none; z-index: 500;
-      animation: float-heart 2.5s ease-out forwards;
-    }
-    @keyframes float-heart {
-      0%   { transform: translateY(0) scale(1); opacity: 1; }
-      100% { transform: translateY(-200px) scale(0.3); opacity: 0; }
-    }
-
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-thumb { background: rgba(255,20,147,0.4); border-radius: 2px; }
+
+    /* ── Global cloud system ── */
+    body { background:transparent; font-family:'IBM Plex Sans Thai',sans-serif; }
+    .wall-header {
+      background:rgba(7,25,43,.44); border-color:rgba(255,255,255,.2);
+      box-shadow:0 12px 42px rgba(7,25,43,.18); backdrop-filter:blur(22px) saturate(120%);
+    }
+    .wall-logo {
+      font-family:'Chakra Petch',sans-serif; color:white; letter-spacing:.14em;
+      background:none; -webkit-text-fill-color:currentColor;
+    }
+    .wall-live { color:white; }
+    .live-dot { background:#ff6685; }
+    .wall-grid { gap:16px; padding:20px 24px; }
+    .wall-card {
+      background:rgba(8,27,48,.42); border-color:rgba(255,255,255,.18); border-radius:20px;
+      box-shadow:0 18px 44px rgba(7,25,43,.24); backdrop-filter:blur(18px);
+    }
+    .wall-card-border { border-radius:18px; }
+    .wall-empty {
+      inset:50% auto auto 50%; transform:translate(-50%,-50%); width:min(520px,88vw); height:auto;
+      padding:44px; border-radius:28px; color:white; background:rgba(8,27,48,.44);
+      border:1px solid rgba(255,255,255,.22); box-shadow:0 24px 70px rgba(7,25,43,.28);
+      backdrop-filter:blur(24px);
+    }
+    .detail-modal { background:rgba(7,25,43,.62); }
+    .detail-inner { background:rgba(8,27,48,.82); border-color:rgba(255,255,255,.22); backdrop-filter:blur(26px); }
+    @media (max-width:640px) {
+      .wall-grid { grid-template-columns:repeat(2,minmax(0,1fr)); padding:14px; gap:10px; }
+    }
   </style>
 </head>
 <body>
-<div class="wall-bg"></div>
+<div class="wall-bg" data-cloud-background></div>
 
 <!-- ── Header ─────────────────────────────────────────────────────────────── -->
 <header class="wall-header">
@@ -189,7 +206,7 @@
 <!-- ── Grid ──────────────────────────────────────────────────────────────── -->
 <div class="wall-grid" id="wall-grid">
   <div class="wall-empty" id="wall-empty">
-    <div class="wall-empty-icon">🖼</div>
+    <svg class="wall-empty-icon wall-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="m21 15-5-5L5 20"/></svg>
     <div class="wall-empty-text">ยังไม่มีวาร์ปขึ้นจอ</div>
     <div style="font-size:14px; margin-top:4px; color:rgba(255,255,255,0.2)">รอสักครู่...</div>
   </div>
@@ -205,11 +222,13 @@
       <div id="detail-table" style="font-size:13px; color:rgba(255,255,255,0.4); margin-bottom:8px;"></div>
       <div id="detail-msg" class="detail-msg" style="display:none"></div>
       <div class="detail-socials" id="detail-socials"></div>
-      <button class="detail-like-btn" id="detail-like-btn" onclick="likeFromModal()">❤️ ไลก์ <span id="modal-likes">0</span></button>
     </div>
   </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.clouds.min.js"></script>
+<script src="/cloud-background.js"></script>
 <script>
   let items = [], currentModalId = null;
 
@@ -239,11 +258,6 @@
     ws.onmessage = async ({ data }) => {
       const { type, data: d } = JSON.parse(data);
       if (['approved','approved_all','removed','cleared'].includes(type)) await loadDisplay();
-      if (type === 'liked') {
-        const item = items.find(i => i.id === d.id);
-        if (item) { item.likes = d.likes; updateCardLikes(d.id, d.likes); }
-        if (currentModalId === d.id) document.getElementById('modal-likes').textContent = d.likes;
-      }
       if (type === 'settings_updated') document.getElementById('wall-logo').textContent = d.eventName || 'DSSI';
     };
     ws.onclose = () => setTimeout(connectWS, 3000);
@@ -269,21 +283,15 @@
       card.innerHTML = `
         ${item.photo
           ? `<img class="wall-card-photo" src="${item.photo}" alt="${escHtml(item.name)}" loading="lazy" />`
-          : `<div class="wall-card-nophoto">👤</div>`}
+          : `<div class="wall-card-nophoto"><svg class="wall-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></div>`}
         <div class="wall-card-border" style="border-color:${item.borderColor}; box-shadow: inset 0 0 20px ${item.borderColor}30, 0 0 20px ${item.borderColor}40"></div>
         <div class="wall-card-footer">
           <div class="wall-card-name">${escHtml(item.name)}</div>
           ${item.table ? `<div class="wall-card-table">โต๊ะ ${escHtml(item.table)}</div>` : ''}
         </div>
-        <div class="wall-card-likes" id="wl-${item.id}">❤️ ${item.likes}</div>
       `;
       grid.appendChild(card);
     });
-  }
-
-  function updateCardLikes(id, likes) {
-    const el = document.getElementById(`wl-${id}`);
-    if (el) el.textContent = `❤️ ${likes}`;
   }
 
   // ── Modal ──
@@ -306,37 +314,11 @@
     if (item.ig) socials.innerHTML += `<div class="detail-chip" style="background:linear-gradient(135deg,#f09433,#dc2743,#bc1888)">📸 @${escHtml(item.ig)}</div>`;
     if (item.facebook) socials.innerHTML += `<div class="detail-chip" style="background:#1877F2">💙 ${escHtml(item.facebook)}</div>`;
 
-    document.getElementById('modal-likes').textContent = item.likes;
     modal.classList.add('open');
   }
 
   function closeModal() { document.getElementById('detail-modal').classList.remove('open'); currentModalId = null; }
   function closeDetail(e) { if (e.target === document.getElementById('detail-modal')) closeModal(); }
-
-  async function likeFromModal() {
-    if (!currentModalId) return;
-    const btn = document.getElementById('detail-like-btn');
-    btn.style.transform = 'scale(1.05)';
-    setTimeout(() => btn.style.transform = '', 200);
-    spawnHeart();
-    try { await fetch(`/api/like/${currentModalId}`, { method: 'POST' }); } catch {}
-  }
-
-  function spawnHeart() {
-    const emojis = ['❤️','💕','💖','💗'];
-    for (let i = 0; i < 8; i++) {
-      setTimeout(() => {
-        const h = document.createElement('div');
-        h.className = 'heart-particle';
-        h.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-        h.style.fontSize = (16 + Math.random() * 16) + 'px';
-        h.style.left = 30 + Math.random() * 40 + 'vw';
-        h.style.top = 50 + Math.random() * 30 + 'vh';
-        document.body.appendChild(h);
-        setTimeout(() => h.remove(), 2600);
-      }, i * 100);
-    }
-  }
 
   function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 

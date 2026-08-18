@@ -5,16 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DSSI — จอแสดงผล</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800;900&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" />
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800;900&display=swap');
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root { --pink: #FF1493; --yellow: #FFD60A; }
+    :root { --pink: #ff6685; --yellow: #ffd56a; --sky-ink:#10243f; --sky-blue:#2d7dce; }
 
     body {
-      font-family: 'Prompt', sans-serif;
-      background: #060614;
+      font-family: 'IBM Plex Sans Thai', sans-serif;
+      background: #75b8df;
       color: white;
       width: 100vw; height: 100vh;
       overflow: hidden;
@@ -208,33 +206,6 @@
     .chip-icon { width: 28px; height: 28px; flex-shrink: 0; }
     .chip-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 280px; }
 
-    /* ── Like button ── */
-    .like-area {
-      position: fixed;
-      right: 32px;
-      bottom: 40px;
-      z-index: 20;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-    }
-    .like-btn {
-      width: 64px; height: 64px;
-      border-radius: 50%;
-      border: none;
-      background: rgba(255,255,255,0.1);
-      backdrop-filter: blur(10px);
-      border: 2px solid rgba(255,255,255,0.15);
-      cursor: pointer;
-      font-size: 28px;
-      transition: all 0.2s;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .like-btn:hover { transform: scale(1.15); background: rgba(255,20,147,0.2); border-color: rgba(255,20,147,0.5); }
-    .like-btn:active { transform: scale(0.9); }
-    .like-count { font-size: 16px; font-weight: 700; color: rgba(255,255,255,0.7); }
-
     /* ── Progress bar ── */
     .progress-bar-wrap {
       position: fixed; bottom: 0; left: 0; right: 0; height: 4px;
@@ -303,16 +274,6 @@
       letter-spacing: 0.5px;
     }
 
-    /* ── Heart particles ── */
-    .heart-particle {
-      position: fixed; pointer-events: none; z-index: 50;
-      animation: float-heart 2.5s ease-out forwards;
-    }
-    @keyframes float-heart {
-      0%   { transform: translateY(0) scale(1) rotate(0deg); opacity: 1; }
-      100% { transform: translateY(-250px) scale(0.3) rotate(30deg); opacity: 0; }
-    }
-
     /* ── Transition overlay ── */
     .transition-overlay {
       position: fixed; inset: 0; z-index: 100;
@@ -321,11 +282,82 @@
       transition: opacity 0.3s ease;
     }
     .transition-overlay.show { opacity: 1; }
+
+    /* ── DSSI Sky Stage ── */
+    .display-bg {
+      background:
+        radial-gradient(ellipse 70% 55% at 75% 18%,rgba(255,255,255,.26),transparent 62%),
+        radial-gradient(ellipse 65% 50% at 10% 85%,rgba(117,184,223,.42),transparent 65%),
+        linear-gradient(165deg,#91cef0,#5d9fca 72%);
+    }
+    .display-bg::after {
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(180deg,rgba(16,51,78,.03),rgba(16,51,78,.28));
+      pointer-events:none;
+    }
+    .stars { display:none; }
+    .ui-icon { width:1.2em; height:1.2em; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+    .display-header { padding:22px 34px; }
+    .display-logo {
+      font-family:'Chakra Petch',sans-serif; font-weight:700; letter-spacing:.14em;
+      color:white; background:none; -webkit-text-fill-color:currentColor;
+      text-shadow:0 2px 18px rgba(16,36,63,.25);
+    }
+    .live-indicator {
+      color:white; background:rgba(16,36,63,.22); border-color:rgba(255,255,255,.38);
+      backdrop-filter:blur(12px); box-shadow:0 8px 30px rgba(16,36,63,.12);
+    }
+    .live-dot { background:#ff6685; }
+    .display-content { padding:8px clamp(24px,5vw,72px) 34px; }
+    .warp-card {
+      max-width:1180px; gap:clamp(28px,5vw,72px); padding:clamp(22px,3vw,38px);
+      border-radius:34px; color:white;
+      background:rgba(8,27,48,.34); border:1px solid rgba(255,255,255,.26);
+      box-shadow:0 28px 90px rgba(4,20,36,.32); backdrop-filter:blur(28px) saturate(120%);
+    }
+    .photo-img, .no-photo-placeholder { width:clamp(240px,31vw,440px); max-height:68vh; border-radius:24px; }
+    .photo-frame-border { inset:-5px; border-radius:29px; border-width:5px; }
+    .photo-frame-glow { inset:-8px; border-radius:31px; opacity:.42 !important; }
+    .info-name {
+      font-family:'Chakra Petch','IBM Plex Sans Thai',sans-serif; color:white;
+      font-size:clamp(2.6rem,6vw,5.4rem); text-shadow:0 3px 22px rgba(4,20,36,.35); letter-spacing:-.025em;
+    }
+    .info-message { color:rgba(255,255,255,.8); }
+    .social-chip { box-shadow:none; }
+    .progress-bar-wrap { height:5px; background:rgba(255,255,255,.22); }
+    .progress-bar-fill { background:linear-gradient(90deg,#2d7dce,#ff6685); }
+    .nav-dot { background:rgba(255,255,255,.48); }
+    .nav-dot.active { background:white; }
+    .empty-display {
+      min-width:min(560px,90vw); padding:48px; border-radius:32px; color:white;
+      background:rgba(8,27,48,.34); border:1px solid rgba(255,255,255,.24);
+      box-shadow:0 28px 80px rgba(2,10,20,.38); backdrop-filter:blur(28px);
+    }
+    .empty-icon { width:72px; height:72px; margin:0 auto 20px; color:#8ecdf2; }
+    .empty-sub { color:rgba(255,255,255,.66); }
+    .qr-container {
+      left:34px; bottom:38px; background:#fff; border-color:rgba(255,255,255,.95);
+      box-shadow:0 16px 44px rgba(16,36,63,.24); backdrop-filter:none;
+    }
+    .qr-text { color:var(--sky-ink); text-transform:none; letter-spacing:0; }
+    .transition-overlay { background:#75b8df; }
+    .no-photo-placeholder .empty-icon { margin:0; color:rgba(255,255,255,.72); }
+    @media (max-width:760px), (max-height:620px) {
+      .display-header { padding:14px 20px; }
+      .display-content { padding:4px 20px 26px; }
+      .warp-card { gap:22px; padding:20px; border-radius:24px; }
+      .photo-img, .no-photo-placeholder { width:clamp(180px,36vw,280px); max-height:65vh; }
+      .info-name { font-size:clamp(2rem,7vw,3.8rem); }
+      .qr-container { left:18px; bottom:28px; padding:8px; }
+    }
+    @media (prefers-reduced-motion:reduce) {
+      *,*::before,*::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; }
+    }
   </style>
 </head>
 <body>
 <!-- ── Background ─────────────────────────────────────────────────────────── -->
-<div class="display-bg"></div>
+<div class="display-bg" data-cloud-background></div>
 <div class="stars" id="stars"></div>
 <div class="transition-overlay" id="transition"></div>
 
@@ -342,23 +374,17 @@
 
   <main class="display-content" id="display-main">
     <div class="empty-display" id="empty-msg">
-      <div class="empty-emoji">🎭</div>
-      <div class="empty-title">ยังไม่มีวาร์ปขึ้นจอ</div>
-      <div class="empty-sub">รอสักครู่… กำลังจะมีคนส่งขึ้นมาเร็วๆ นี้!</div>
+      <svg class="empty-icon ui-icon" aria-hidden="true"><use href="#icon-image" /></svg>
+      <div class="empty-title" id="empty-title">ยังไม่มีวาร์ปขึ้นจอ</div>
+      <div class="empty-sub" id="empty-sub">สแกน QR แล้วส่งรูปแรกขึ้นมาได้เลย</div>
     </div>
   </main>
-</div>
-
-<!-- ── Like button ────────────────────────────────────────────────────────── -->
-<div class="like-area" id="like-area" style="display:none">
-  <button class="like-btn" id="like-btn" onclick="sendLike()">❤️</button>
-  <div class="like-count" id="like-count">0</div>
 </div>
 
 <!-- ── QR Code ──────────────────────────────────────────────────────────── -->
 <div class="qr-container" id="qr-container" style="display:none">
   <img class="qr-img" id="qr-img" src="" alt="QR Code" />
-  <div class="qr-text">แสกนส่งรูป</div>
+  <div class="qr-text">สแกนเพื่อส่งรูป</div>
 </div>
 
 <!-- ── Progress bar ───────────────────────────────────────────────────────── -->
@@ -369,6 +395,14 @@
 <!-- ── Nav dots ───────────────────────────────────────────────────────────── -->
 <div class="nav-dots" id="nav-dots"></div>
 
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="icon-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="m21 15-5-5L5 20"/></symbol>
+  <symbol id="icon-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+  <symbol id="icon-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+</svg>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.clouds.min.js"></script>
+<script src="/cloud-background.js"></script>
 <script>
   let items = [], currentIdx = 0;
   let settings = { autoAdvance: true, advanceInterval: 10, eventName: 'WARP CLUB' };
@@ -395,7 +429,6 @@
 
   // ── Init ──
   async function init() {
-    createStars();
     await loadSettings();
     await loadDisplay();
     loadQR();
@@ -456,14 +489,11 @@
           }
         }
       }
+      if (type === 'new_submission' && items.length === 0) refreshEmptyState();
       if (type === 'removed' || type === 'cleared') {
         await loadDisplay();
         if (items.length === 0) { currentIdx = 0; showEmpty(); }
         else { currentIdx = Math.min(currentIdx, items.length - 1); showItem(currentIdx); }
-      }
-      if (type === 'liked' && d.id === currentId) {
-        document.getElementById('like-count').textContent = d.likes;
-        spawnHeart(null, true);
       }
       if (type === 'settings_updated') {
         settings = d;
@@ -479,10 +509,26 @@
     document.getElementById('empty-msg').style.display = 'block';
     const existing = document.querySelector('.warp-card');
     if (existing) existing.remove();
-    document.getElementById('like-area').style.display = 'none';
     document.getElementById('progress-wrap').style.display = 'none';
     clearProgress();
     currentId = null;
+    refreshEmptyState();
+  }
+
+  async function refreshEmptyState() {
+    try {
+      const r = await fetch('/api/stats');
+      const stats = await r.json();
+      const title = document.getElementById('empty-title');
+      const sub = document.getElementById('empty-sub');
+      if (stats.queue > 0) {
+        title.textContent = `มี ${stats.queue} วาร์ปรออนุมัติ`;
+        sub.textContent = 'อนุมัติจากหน้าแอดมิน แล้วรายการจะขึ้นจอนี้ทันที';
+      } else {
+        title.textContent = 'ยังไม่มีวาร์ปขึ้นจอ';
+        sub.textContent = 'สแกน QR แล้วส่งรูปแรกขึ้นมาได้เลย';
+      }
+    } catch {}
   }
 
   function showItem(idx) {
@@ -494,8 +540,6 @@
     currentId = item.id;
 
     document.getElementById('empty-msg').style.display = 'none';
-    document.getElementById('like-area').style.display = 'flex';
-    document.getElementById('like-count').textContent = item.likes;
     document.getElementById('progress-wrap').style.display = settings.autoAdvance ? 'block' : 'none';
 
     // Transition
@@ -520,7 +564,7 @@
 
     const photoHTML = item.photo
       ? `<img class="photo-img" src="${item.photo}" alt="${escHtml(item.name)}" />`
-      : `<div class="no-photo-placeholder">👤</div>`;
+      : `<div class="no-photo-placeholder"><svg class="empty-icon ui-icon" aria-hidden="true"><use href="#icon-user" /></svg></div>`;
 
     const tableHTML = item.table
       ? `<div class="table-badge">โต๊ะ ${escHtml(item.table)}</div>`
@@ -544,6 +588,7 @@
           <div class="photo-frame-glow" style="background:${item.borderColor}"></div>
           <div class="photo-frame-border" style="border-color:${item.borderColor}; box-shadow: 0 0 30px ${item.borderColor}, inset 0 0 30px ${item.borderColor}20"></div>
           ${photoHTML}
+          ${tableHTML}
         </div>
       </div>
       <div class="info-section">
@@ -594,33 +639,6 @@
     });
   }
 
-  // ── Like ──
-  async function sendLike() {
-    if (!currentId) return;
-    const btn = document.getElementById('like-btn');
-    btn.style.transform = 'scale(1.4)';
-    setTimeout(() => btn.style.transform = '', 200);
-    spawnHeart(btn);
-    try { await fetch(`/api/like/${currentId}`, { method: 'POST' }); } catch {}
-  }
-
-  function spawnHeart(ref, fromWS = false) {
-    const emojis = ['❤️','💕','💖','💗','💓','🩷'];
-    const count = fromWS ? 3 : 6;
-    for (let i = 0; i < count; i++) {
-      setTimeout(() => {
-        const h = document.createElement('div');
-        h.className = 'heart-particle';
-        h.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-        h.style.fontSize = (18 + Math.random() * 20) + 'px';
-        h.style.left = (fromWS ? 60 + Math.random() * 30 : 80 + Math.random() * 10) + 'vw';
-        h.style.top = (fromWS ? 40 + Math.random() * 30 : 70 + Math.random() * 10) + 'vh';
-        document.body.appendChild(h);
-        setTimeout(() => h.remove(), 2600);
-      }, i * 150);
-    }
-  }
-
   function escHtml(str) {
     return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
@@ -629,7 +647,6 @@
   document.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowRight' || e.key === ' ') { clearProgress(); showItem(currentIdx + 1); }
     if (e.key === 'ArrowLeft') { clearProgress(); showItem(currentIdx - 1); }
-    if (e.key === 'l' || e.key === 'L') sendLike();
   });
 
   init();

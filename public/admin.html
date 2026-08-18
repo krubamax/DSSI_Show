@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DSSI • แอดมิน</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800;900&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" />
   <link rel="stylesheet" href="/style.css" />
   <style>
     body { background: #060614; overflow-x: hidden; }
@@ -244,9 +244,41 @@
     .auto-approve-btn.on .auto-approve-dot {
       animation: pulse-live 1.5s infinite;
     }
+
+    /* ── Global cloud system ── */
+    body { background:transparent; font-family:'IBM Plex Sans Thai',sans-serif; min-height:100vh; }
+    .btn, .tab-btn, .auto-approve-btn, .form-input, .form-textarea { font-family:inherit; }
+    #login-overlay { background:rgba(7,25,43,.34); backdrop-filter:blur(18px); }
+    .login-box, .settings-card, .submission-card, .modal-box {
+      background:rgba(8,27,48,.55); border-color:rgba(255,255,255,.22);
+      box-shadow:0 20px 60px rgba(7,25,43,.24); backdrop-filter:blur(24px) saturate(120%);
+    }
+    .login-logo, .navbar-brand span {
+      font-family:'Chakra Petch',sans-serif; color:white; letter-spacing:.08em;
+      background:none; -webkit-text-fill-color:currentColor;
+    }
+    .login-sub { color:rgba(255,255,255,.68); }
+    .navbar {
+      background:rgba(7,25,43,.48); border-color:rgba(255,255,255,.2);
+      box-shadow:0 12px 40px rgba(7,25,43,.18); backdrop-filter:blur(24px) saturate(120%);
+    }
+    .tabs { background:rgba(7,25,43,.24); border-color:rgba(255,255,255,.18); backdrop-filter:blur(14px); }
+    .tab-btn { color:rgba(255,255,255,.7); }
+    .tab-btn.active { background:rgba(255,255,255,.14); border-bottom-color:#ffd56a; }
+    .approve-bar { background:rgba(8,27,48,.42); border-color:rgba(255,255,255,.2); color:rgba(255,255,255,.8); backdrop-filter:blur(18px); }
+    .settings-card { border-radius:20px; }
+    .submission-card { border-radius:20px; }
+    .qr-url { background:rgba(8,27,48,.46); border-color:rgba(255,255,255,.22); backdrop-filter:blur(18px); }
+    #qr-image { background:white; padding:10px; }
+    @media (max-width:720px) {
+      .navbar { padding:12px; }
+      .navbar-actions { margin-left:0; width:100%; }
+      .tab-content { padding:14px; }
+    }
   </style>
 </head>
 <body>
+<div data-cloud-background></div>
 <div id="toast-container"></div>
 
 <!-- ── Login Modal ────────────────────────────────────────────────────────── -->
@@ -270,7 +302,6 @@
   <div class="navbar-stats">
     <div class="stat-badge">🎭 รออนุมัติ <strong id="nb-queue">0</strong></div>
     <div class="stat-badge">📺 บนจอ <strong id="nb-display">0</strong></div>
-    <div class="stat-badge">❤️ <strong id="nb-likes">0</strong></div>
   </div>
   <div class="navbar-actions">
     <button class="btn btn-ghost btn-sm" onclick="window.open('/warp','_blank')" title="ดูฟอร์ม">📏 ฟอร์ม</button>
@@ -373,6 +404,13 @@
         </div>
         <label class="toggle"><input type="checkbox" id="set-approval" checked onchange="saveSettings()"><span class="toggle-slider"></span></label>
       </div>
+      <div class="settings-row">
+        <div>
+          <div class="settings-label">บังคับแนบรูป</div>
+          <div class="settings-sub">เปิด = ส่งฟอร์มไม่ได้จนกว่าจะเลือกรูป</div>
+        </div>
+        <label class="toggle"><input type="checkbox" id="set-require-photo" onchange="saveSettings()"><span class="toggle-slider"></span></label>
+      </div>
     </div>
   </div>
 </div>
@@ -409,6 +447,9 @@
   </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.clouds.min.js"></script>
+<script src="/cloud-background.js"></script>
 <script>
   let TOKEN = '';
   let qrUrl = '';
@@ -458,7 +499,6 @@
       if (type === 'rejected') { loadQueue(); loadBanned(); loadStats(); }
       if (type === 'removed') { loadDisplay(); loadStats(); }
       if (type === 'cleared') { loadDisplay(); loadStats(); }
-      if (type === 'liked') updateLikes(d.id, d.likes);
       if (type === 'settings_updated') applySettings(d);
     };
     ws.onclose = () => setTimeout(connectWS, 3000);
@@ -517,7 +557,6 @@
       const s = await r.json();
       document.getElementById('nb-queue').textContent = s.queue;
       document.getElementById('nb-display').textContent = s.display;
-      document.getElementById('nb-likes').textContent = s.totalLikes;
       document.getElementById('tc-queue').textContent = s.queue;
       document.getElementById('tc-display').textContent = s.display;
     } catch {}
@@ -535,11 +574,13 @@
     const auto = document.getElementById('set-auto');
     const intv = document.getElementById('set-interval');
     const appr = document.getElementById('set-approval');
+    const requirePhoto = document.getElementById('set-require-photo');
     if (n) n.value = s.eventName || '';
     if (sub) sub.value = s.subtitle || '';
     if (auto) auto.checked = s.autoAdvance !== false;
     if (intv) intv.value = s.advanceInterval || 10;
     if (appr) appr.checked = s.requireApproval !== false;
+    if (requirePhoto) requirePhoto.checked = s.requirePhoto === true;
     // sync navbar auto-approve button
     updateAutoApproveBtn(s.requireApproval === false);
   }
@@ -566,6 +607,7 @@
       autoAdvance: document.getElementById('set-auto')?.checked !== false,
       advanceInterval: parseInt(document.getElementById('set-interval')?.value) || 10,
       requireApproval: newRequireApproval,
+      requirePhoto: document.getElementById('set-require-photo')?.checked === true,
     };
     await api('/api/settings', { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
     updateAutoApproveBtn(!isCurrentlyAuto);
@@ -616,7 +658,6 @@
         <button class="btn btn-success btn-sm" style="flex:1" onclick="approveOne('${item.id}')">✅ อนุมัติ</button>
         <button class="btn btn-danger btn-sm" style="flex:1" onclick="rejectOne('${item.id}')">🚫 ไม่ผ่าน</button>
       ` : type === 'display' ? `
-        <div style="display:flex; align-items:center; gap:6px; font-size:13px; color:rgba(255,255,255,0.5)">❤️ <strong id="likes-${item.id}">${item.likes}</strong></div>
         <button class="btn btn-danger btn-sm" onclick="removeDisplay('${item.id}')">🗑 นำออก</button>
       ` : '';
 
@@ -640,12 +681,6 @@
 
   function escHtml(str) {
     return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
-
-  function updateLikes(id, likes) {
-    const el = document.getElementById(`likes-${id}`);
-    if (el) el.textContent = likes;
-    document.getElementById('nb-likes').textContent = parseInt(document.getElementById('nb-likes').textContent || 0) + 1;
   }
 
   // ── Actions ──
@@ -690,6 +725,7 @@
       autoAdvance: document.getElementById('set-auto').checked,
       advanceInterval: parseInt(document.getElementById('set-interval').value) || 10,
       requireApproval: document.getElementById('set-approval').checked,
+      requirePhoto: document.getElementById('set-require-photo').checked,
     };
     await api('/api/settings', { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
     showToast('💾 บันทึกแล้ว', 'success');
